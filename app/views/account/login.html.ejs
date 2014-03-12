@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <meta charset="utf8" />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <!-- TODO?: make a common header file for most pages.  -->
+    <script src="/javascripts/jquery-1.8.3.min.js"></script>
+    <script src="/javascripts/x.js"></script>
+  </head>
+  <body>
+    <h1 id="title">voting-system-5000.</h1>
+
+    <form action="/login" method="post">
+    	<input type="text" name="username" placeholder="username" />
+    	<input type="password" name="password" placeholder="password" />
+    	<button type="submit">login</button>
+    </form>
+
+  </body>
+</html>

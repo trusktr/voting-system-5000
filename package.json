@@ -1,0 +1,20 @@
+{
+	"name": "voting-system-5000",
+	"version": "0.0.1",
+	"private": true,
+	"dependencies": {
+		"locomotive": "0.3.2",
+		"express": "3.0.0rc4",
+		"connect-powered-by": "0.1.0",
+
+		"passport":"0.1.12",
+		"passport-local":"0.1.6",
+
+		"ejs": "0.8.3",
+
+		"mongoose":"3.1.2",
+		"locomotive-mongoose": "0.1.0",
+
+		"node-codein":"1.0.1"
+	}
+}
