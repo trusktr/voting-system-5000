@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{title}</title>
+        <meta charset="utf8" />
+
+        <!--STYLES-->
+        <link rel="stylesheet" href="/stylesheets/style.css" />
+
+        <!--Stuff for the head of each view gets loaded here.-->
+        {+header}
+
+    </head>
+    <body>
+        <h1 id="{title}">{title}</h1>
+
+        <!--The main content for each view gets loaded here.-->
+        {+body}
+
+        <!--SCRIPTS-->
+        <script src="/javascripts/jquery-1.11.0.min.js"></script>
+        <script src="/javascripts/x.js"></script>
+
+        <!--All view scripts get loaded here:-->
+        {+footer}
+
+    </body>
+</html>

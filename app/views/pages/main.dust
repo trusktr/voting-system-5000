@@ -1,0 +1,15 @@
+{>skeleton /}
+
+{<header}
+    {!Put all stuff for the header here.!}
+{/header}
+
+{<body}
+    {!Put all content of the view here.!}
+{/body}
+
+{<footer}
+    <script>
+        // put all JavaScript here.
+    </script>
+{/footer}
