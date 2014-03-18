@@ -11,8 +11,8 @@
     </form>
 {/body}
 
-{<footer}
+{<foobar}
     <script>
         // put all JavaScript here.
     </script>
-{/footer}
+{/foobar}

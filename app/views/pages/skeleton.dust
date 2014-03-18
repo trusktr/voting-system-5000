@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{title}</title>
+        <meta charset="utf8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <!--STYLES-->
+        <link rel="stylesheet" href="/foundation-5.2.1/css/normalize.css" />
+        <link rel="stylesheet" href="/foundation-5.2.1/css/foundation.min.css" />
+        <link rel="stylesheet" href="/stylesheets/style.css" />
+        <script src="/foundation-5.2.1/js/vendor/modernizr.js"></script>
+
+<!--Stuff for the head of each view gets loaded here.-->
+{+header/}
+
+    </head>
+    <body>
+        <div class="container">
+            <div id="navBar" class="row">
+                <div class="large-12 columns">
+                    <nav data-topbar="" class="top-bar">
+                        <ul class="title-area">
+                            <!-- Title Area -->
+                            <li class="name">
+                            <h1 id="title">
+                                <a href="/">
+                                    {title}
+                                </a>
+                            </h1>
+                            </li>
+                            <li class="toggle-topbar menu-icon"><a href="#"><span>menu</span></a></li>
+                        </ul>
+
+
+                        <section class="top-bar-section" style="left: 0%;">
+                            <!-- Right Nav Section -->
+                            <ul class="right">
+                                <li class="divider"></li>
+                                <li class="has-dropdown not-click">
+                                <a href="#">Main Item 1</a>
+                                <ul class="dropdown"><li class="title back js-generated"><h5><a href="javascript:void(0)">Back</a></h5></li>
+                                    <li><label>Section Name</label></li>
+                                    <li class="has-dropdown not-click">
+                                    <a class="" href="#">Has Dropdown, Level 1</a>
+                                    <ul class="dropdown"><li class="title back js-generated"><h5><a href="javascript:void(0)">Back</a></h5></li>
+                                        <li><a href="#">Dropdown Options</a></li>
+                                        <li><a href="#">Dropdown Options</a></li>
+                                        <li><a href="#">Level 2</a></li>
+                                        <li><a href="#">Subdropdown Option</a></li>
+                                        <li><a href="#">Subdropdown Option</a></li>
+                                        <li><a href="#">Subdropdown Option</a></li>
+                                    </ul>
+                                    </li>
+                                    <li><a href="#">Dropdown Option</a></li>
+                                    <li><a href="#">Dropdown Option</a></li>
+                                    <li class="divider"></li>
+                                    <li><label>Section Name</label></li>
+                                    <li><a href="#">Dropdown Option</a></li>
+                                    <li><a href="#">Dropdown Option</a></li>
+                                    <li><a href="#">Dropdown Option</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="#">See all →</a></li>
+                                </ul>
+                                </li>
+                                <li class="divider"></li>
+                                <li class="has-dropdown not-click">
+                                <a href="#">Main Item 2</a>
+                                <ul class="dropdown"><li class="title back js-generated"><h5><a href="javascript:void(0)">Back</a></h5></li>
+                                    <li><a href="#">Dropdown Option</a></li>
+                                    <li><a href="#">Dropdown Option</a></li>
+                                    <li><a href="#">Dropdown Option</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="#">See all →</a></li>
+                                </ul>
+                                </li>
+                            </ul>
+                        </section>
+                    </nav>
+                </div>
+            </div>
+
+<!--The main content for each view gets loaded here.-->
+{+body/}
+
+            <footer class="row">
+                <div class="large-12 columns">
+                    <hr />
+                    <div class="row">
+                        <div class="large-5 columns">
+                            <p>&copy; Copyright Hector Garcia, Christopher Lawson, Joe Pea</p>
+                        </div>
+                        <div class="large-7 columns">
+                            <ul class="inline-list right">
+                                <li><a href="#register">Register to Vote</a></li>
+                                <li><a href="#vote">Vote</a></li>
+                                <li><a href="#results">Check Results</a></li>
+                                <li><a href="#elections">Manage Election</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div><!--.container-->
+
+        <!--SCRIPTS-->
+        <!--<script src="/javascripts/jquery-1.11.0.min.js"></script>-->
+        <script src="/foundation-5.2.1/js/vendor/jquery.js"></script>
+        <script src="/foundation-5.2.1/js/vendor/fastclick.js"></script>
+        <script src="/foundation-5.2.1/js/vendor/placeholder.js"></script>
+        <script src="/foundation-5.2.1/js/foundation.min.js"></script>
+        <script>
+            $(document).foundation();
+        </script>
+        <script src="/javascripts/x.js"></script>
+
+<!--Stuff for the footer of each view gets loaded here.-->
+{+footer/}
+
+    </body>
+</html>

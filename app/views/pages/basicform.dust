@@ -1,0 +1,38 @@
+{>skeleton /}
+
+{<header}
+    {!Put all stuff for the header here.!}
+{/header}
+
+{<body}
+<form>
+  <div class="row">
+    <div class="large-12 columns">
+      <label>Voter Name
+        <input type="text" placeholder="large-12.columns" />
+      </label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-12 columns">
+      <label>Voter Social Security Number
+        <input type="password" placeholder="large-12.columns" />
+      </label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-12 columns">
+      <label>Voter Address
+        <textarea placeholder="small-12.columns"></textarea>
+      </label>
+    </div>
+  </div>
+</form>    
+	
+{/body}
+
+{<footer}
+    <script>
+        // put all JavaScript here.
+    </script>
+{/footer}

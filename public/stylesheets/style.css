@@ -4,29 +4,44 @@
  * ratio, touch abilities, etc.
  */
 
-body, html {
-	padding: 0;
-	margin: 0;
-	height: 100%;
-	width: 100%;
-	position: relative;
-	background-color: #8fafdb;
-}
 body {
 	font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
+.row {max-width: 100%;}
 
-a {
-	color: #00b7ff;
+
+#navBar {
+    position: fixed;
+    z-index: 1000;
+}
+nav.top-bar {
 }
 
-#title {
-	font-size: inherit;
-	display: inline;
-	position: absolute;
-	top: 45%;
-	left: 50%;
-	margin-left: 0;/*js*/
-	margin-top: 0;/*js*/
-	color: #444;
+#titlePanel {
+    display: block;
+    overflow: hidden;
+    position: relative;
+    margin-top: 45px; /*set with js?*/
+}
+
+#fiveThousand {
+    color: #ddd;
+    display: block;
+    font-size: 4em;
+    font-weight: bold;
+    left: 2em;
+    position: absolute;
+    top: -0.2em;
+    transform: rotate(-10deg);
+}
+
+[data-orbit] img {
+    width: 100%;
+}
+
+#voting-system-sidebar .label {
+    background: none repeat scroll 0 0 #DDDDDD;
+    border-radius: 3px;
+    color: #777777;
+    margin-left: 5px;
 }

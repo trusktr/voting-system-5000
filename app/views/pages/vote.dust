@@ -1,0 +1,78 @@
+{>skeleton /}
+
+{<header}
+    {!Put all stuff for the header here.!}
+{/header}
+
+{<body}
+<div class="row">
+
+ {!This page is loaded after a registered voter has authenticated with the system and would like to vote!}
+
+ <!-- Nav Sidebar -->
+
+    <!-- This is source ordered to be pulled to the left on larger screens -->
+    <div class="large-3 columns ">
+      <div class="panel">
+        <a href="#"><img src="http://placehold.it/300x240&text=[img]" /></a>
+        <h5><a href="#">Voting Races</a></h5>
+          <div class="section-container vertical-nav" data-section data-options="deep_linking: false; one_up: true">
+          <section class="section">
+            <h5 class="title"><a href="#">President</a></h5>
+          </section>
+          <section class="section">
+            <h5 class="title"><a href="#">Vice President</a></h5>
+          </section>
+          <section class="section">
+            <h5 class="title"><a href="#">Master of Debate</a></h5>
+          </section>
+          <section class="section">
+            <h5 class="title"><a href="#">Cunning Linguist</a></h5>
+          </section>
+          <section class="section">
+            <h5 class="title"><a href="#">Proposition 46: Coffee ban</a></h5>
+          </section>
+          <section class="section">
+            <h5 class="title"><a href="#">Proposition 47: Replace public tap water with coffee</a></h5>
+          </section>
+        </div>
+
+      </div>
+    </div>
+    
+    <!-- Main List -->
+    <!-- This has been source ordered to come first in the markup (and on small devices) but to be to the right of the nav on larger screens -->
+    <div class="large-9 columns">
+
+      <!-- Feed Entry -->
+      <div class="row">
+        <div class="large-2 columns small-3"><img src="http://placehold.it/80x80&text=[img]" /></div>
+        <div class="large-10 columns">
+          <p><strong>Title of Race and/or Proposition</strong></p>
+
+          <h6>Please make your selection below</h6>
+          <div class="row">
+            <div class="large-2 columns small-3"><img src="http://placehold.it/50x50&text=[img]" /></div>
+            <div class="large-10 columns"><p>Political McCandidateson</p></div>
+          </div>
+          <div class="row">
+            <div class="large-2 columns small-3"><img src="http://placehold.it/50x50&text=[img]" /></div>
+            <div class="large-10 columns"><p>Otherguy Officerunner</p></div>
+          </div>
+        </div>
+      </div>
+      <!-- End Feed Entry -->
+
+      <hr />
+
+    </div>
+
+  </div>    
+	
+{/body}
+
+{<footer}
+    <script>
+        // put all JavaScript here.
+    </script>
+{/footer}

@@ -11,6 +11,9 @@
 		"passport-local":"0.1.6",
 
 		"ejs": "0.8.3",
+                "dustjs-linkedin": "2.3.4",
+                "klei-dust": "0.8.1",
+                "consolidate": "0.10.0",
 
 		"mongoose":"3.1.2",
 		"locomotive-mongoose": "0.1.0",
