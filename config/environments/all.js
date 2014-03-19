@@ -6,12 +6,11 @@ console.log('Setting up configuration for all environments.');
 var express = require('express'),
     poweredBy = require('connect-powered-by'),
     util = require('util'),
-    TEMPLATE_ENGINE = "dust",
-    kleiDust = require('klei-dust'),
-    dust = require('dustjs-linkedin'), // Dust.js template engine (the LinkedIn fork)
-    consolidate = require('consolidate'), // template engine compatibility layer to make engines that don't work with expressjs work with expressjs.
+    //dust = require('dustjs-linkedin'), // Dust.js template engine (the LinkedIn fork)
+    //consolidate = require('consolidate'), // template engine compatibility layer to make engines that don't work with expressjs work with expressjs.
+    kleiDust = require('klei-dust'), // another template engine compatibility layer to make Dust.js specifically work with expressjs.
 
-//PASSPORT
+    //PASSPORT
     passport = require('passport');
 
 

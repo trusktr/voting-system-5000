@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>{title}</title>
+        <title>{common.title}</title>
         <meta charset="utf8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -25,7 +25,7 @@
                             <li class="name">
                             <h1 id="title">
                                 <a href="/">
-                                    {title}
+                                    {common.title}
                                 </a>
                             </h1>
                             </li>
@@ -36,44 +36,12 @@
                         <section class="top-bar-section" style="left: 0%;">
                             <!-- Right Nav Section -->
                             <ul class="right">
+                            {#common.menu}
                                 <li class="divider"></li>
-                                <li class="has-dropdown not-click">
-                                <a href="#">Main Item 1</a>
-                                <ul class="dropdown"><li class="title back js-generated"><h5><a href="javascript:void(0)">Back</a></h5></li>
-                                    <li><label>Section Name</label></li>
-                                    <li class="has-dropdown not-click">
-                                    <a class="" href="#">Has Dropdown, Level 1</a>
-                                    <ul class="dropdown"><li class="title back js-generated"><h5><a href="javascript:void(0)">Back</a></h5></li>
-                                        <li><a href="#">Dropdown Options</a></li>
-                                        <li><a href="#">Dropdown Options</a></li>
-                                        <li><a href="#">Level 2</a></li>
-                                        <li><a href="#">Subdropdown Option</a></li>
-                                        <li><a href="#">Subdropdown Option</a></li>
-                                        <li><a href="#">Subdropdown Option</a></li>
-                                    </ul>
-                                    </li>
-                                    <li><a href="#">Dropdown Option</a></li>
-                                    <li><a href="#">Dropdown Option</a></li>
-                                    <li class="divider"></li>
-                                    <li><label>Section Name</label></li>
-                                    <li><a href="#">Dropdown Option</a></li>
-                                    <li><a href="#">Dropdown Option</a></li>
-                                    <li><a href="#">Dropdown Option</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="#">See all →</a></li>
-                                </ul>
+                                <li class="">
+                                    <a href="{uri}">{title}</a>
                                 </li>
-                                <li class="divider"></li>
-                                <li class="has-dropdown not-click">
-                                <a href="#">Main Item 2</a>
-                                <ul class="dropdown"><li class="title back js-generated"><h5><a href="javascript:void(0)">Back</a></h5></li>
-                                    <li><a href="#">Dropdown Option</a></li>
-                                    <li><a href="#">Dropdown Option</a></li>
-                                    <li><a href="#">Dropdown Option</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="#">See all →</a></li>
-                                </ul>
-                                </li>
+                            {/common.menu}
                             </ul>
                         </section>
                     </nav>
@@ -92,10 +60,9 @@
                         </div>
                         <div class="large-7 columns">
                             <ul class="inline-list right">
-                                <li><a href="#register">Register to Vote</a></li>
-                                <li><a href="#vote">Vote</a></li>
-                                <li><a href="#results">Check Results</a></li>
-                                <li><a href="#elections">Manage Election</a></li>
+                            {#common.menu}
+                                <li><a href="{uri}">{title}</a></li>
+                            {/common.menu}
                             </ul>
                         </div>
                     </div>

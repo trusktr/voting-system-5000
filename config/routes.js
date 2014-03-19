@@ -11,7 +11,7 @@ console.log('Setting up routes.');
 function lock(req, res, next) {
 	console.log('### Checking user authentication status.');
 	if (req.isAuthenticated()) { return next(); }
-	res.redirect('/login'); return;
+        else {res.redirect('/login'); return;}
 }
 
 //var PagesController = new (require('../app/contollers/pages_controller.js'));
@@ -20,19 +20,16 @@ function lock(req, res, next) {
 module.exports = function routes() {
 	console.log('Constructing routes.');
 
-	this.match('*', 'pages#all'); // all
+	this.match('*', 'pages#all'); // PagesController.all() will be called for all pages first.
 
 	// this.match('/', [lock]);
-	this.match('/', 'pages#main');
+	this.match('/', 'pages#root');
 
+        // Don't worry about log in stuff yet. Technically we can do that in the
+        // second assignment.
 	this.match('/login', 'account#login', {via: 'get'}); // login form.
 	this.match('/login', 'account#authenticate', {via: 'post'}); // submission of the login form.
 	this.match('/logout', 'account#logout', {via: 'get'}); // logs out the user.
-	
-	
-	
-	/*Links*/
-	this.match('/lets-find-a-cure-for-ahmad', 'link#director');
 
 	console.log('Done constructing routes.');
 }
