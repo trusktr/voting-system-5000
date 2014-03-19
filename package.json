@@ -15,7 +15,7 @@
                 "klei-dust": "0.8.1",
                 "consolidate": "0.10.0",
 
-		"mongoose":"3.1.2",
+		"mongoose":"3.8.8",
 		"locomotive-mongoose": "0.1.0",
 
 		"node-codein":"1.0.1"
