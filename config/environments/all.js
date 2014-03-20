@@ -1,7 +1,12 @@
+/*
+ * This is the configuration file for all environments. These settings shoudln't
+ * need to be modified too often. For the most part, all application logic is
+ * written in the controllers.
+ */
 
 console.log('Setting up configuration for all environments.');
 
-//var codein = require('node-codein'); // for visual debugging in a browser.
+//var codein = require('node-codein'); // for visual debugging in a browser using element inspector.
 
 var express = require('express'),
     poweredBy = require('connect-powered-by'),
@@ -69,6 +74,12 @@ module.exports = function() {
           this.use(this.router);
 
       // The database engine.
+          /*
+           * Mongoose is a wrapper for MongoDB that allows you to create Schema
+           * (models) for your objects and enforces the Schema rules before
+           * storing your objects into MongoDB. locomotive-mongoose allows us to
+           * use mongoose in our Locomotive.js app.
+           */
           this.datastore(require('locomotive-mongoose'));
 
   console.log(' --- Done executing primary settings.');
