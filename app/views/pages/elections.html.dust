@@ -1,0 +1,102 @@
+{>skeleton /}
+
+{<header} {!Put all header stuff here.!}
+{/header}
+
+{<body} {!Put all html content of the view here.!}
+<div class="row">
+    <div class="large-12 columns">
+
+        <div class="row">
+            <div class="large-12 columns">
+                <div id="titlePanel" class="panel">
+                    Welcome to
+                    <h1 id="{common.title}">Voting System <span id="fiveThousand">5000</span></h1>
+                </div>
+            </div>
+        </div>
+
+<div class="row">
+<div class="large-12 columns">		
+<form>
+  <fieldset>
+    <legend>Manage Candidates</legend>
+
+    <label>Name 
+      <input type="text" placeholder="Candidate first and last name">
+    </label>
+	<label>Election todo: add multiple candidates with + button
+      <input type="text" placeholder="Candidate election">
+    </label>
+  </fieldset> 
+</form>
+</div>
+
+<div class="row">
+<div class="large-12 columns">
+<form>
+  <fieldset>
+    <legend>Manage Election</legend>
+
+    <label>Name
+      <input type="text" placeholder="Proposal name">
+    </label>
+	<label>Election todo: add multiple proposals with + button
+      <input type="text" placeholder="Proposal description">
+    </label>
+  </fieldset> 
+</form>
+</div>
+
+<div class="row">
+<div class="large-12 columns">
+<form>
+  <fieldset>
+    <legend>Manage Election</legend>
+  
+      <label>Election Status</label>
+      <input type="radio" name="status" value="Pre-election" id="Pre-election"><label for="Pre-election">Pre-election</label>
+      <input type="radio" name="status" value="Registration" id="Registration"><label for="Registration">Registration</label>
+	  <input type="radio" name="status" value="Voting" id="Voting"><label for="Voting">Voting</label>
+	  <input type="radio" name="status" value="Post-election" id="Post-election"><label for="Post-election">Post-election</label>
+    
+  </fieldset>
+</form>
+</div>
+
+        <br>
+
+        <div class="row">
+            <div id="voting-system-sidebar" class="large-3 medium-4 columns">
+                <div class="hide-for-small">
+                    <div class="sidebar">
+                        <h5>Foundation Documentation</h5>
+                        <form>
+                            <!--  <label>Search Documentation</label> -->
+                            <input type="search" placeholder="Search Docs: e.g. forms" id="autocomplete" tabindex="1" autocomplete="off">
+                        </form>
+
+                        <nav>
+                            <ul class="side-nav">
+                                <li class="heading">Setup</li>
+                                <li><a data-search="" href="index.html">Getting Started</a></li>
+                                <li><a data-search="Styles" href="css.html">CSS</a></li>
+
+                                <li class="divider"></li>
+                                <li class="heading">Structure</li>
+                                <li><a data-search="Breakpoints" href="media-queries.html">Media Queries</a></li>
+                                <li><a data-search="" href="components/visibility.html">Visibility</a></li>
+                            </ul>
+                        </nav>
+                    </div><!-- .sidebar -->
+                </div>
+            </div><!-- #voting-system-sidebar-->
+        </div><!--.row-->
+    </div><!-- .large-12.columns -->
+</div><!-- .row -->
+{/body}
+
+{<foobar} {!Put all scripts here.!}
+    <script>
+    </script>
+{/foobar}
