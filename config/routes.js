@@ -22,7 +22,7 @@ module.exports = function routes() {
 
 	this.match('*', 'pages#all'); // PagesController.all() will be called for all pages first.
 
-	// this.match('/', [lock]);
+	//this.match(/^((?!^\/login$).)*$/, [lock]);
 	this.match('/', 'pages#root');
 	this.match('/register', 'pages#register');
         this.match('/vote', 'pages#vote');

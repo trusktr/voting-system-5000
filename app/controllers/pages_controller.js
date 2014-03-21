@@ -36,6 +36,13 @@ console.log('Setting up Pages controller.');
     PagesController.root = function() {
         console.log('### pages#root');
 
+        var viewContext = this;
+        viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
+
+        console.log(" this is ");
+        this.app = "TESTERRRRRRRR";
+        console.log(this);
+
         /*
          * Example usage of a model:
          */
@@ -68,8 +75,7 @@ console.log('Setting up Pages controller.');
             // happen simultaneously, and while those are executing, the
             // following two lines will also fire and render the web page.
 
-        this.common = commonAttributes; // Always have this line in each controller.
-        this.render();
+        viewContext.render();
 
         // This is the beauty of JavaScript.
 
@@ -78,20 +84,55 @@ console.log('Setting up Pages controller.');
     };
 
     PagesController.register = function() {
-        this.render();
+        var viewContext = this;
+        viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
+        viewContext.render();
     };
 
     PagesController.vote = function() {
-        this.render();
+        var viewContext = this;
+        viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
+        viewContext.render();
     };
+
     PagesController.results = function() {
-        this.render();
+        var viewContext = this;
+        viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
+        viewContext.render();
     };
 
     PagesController.admin = function() {
-        this.render();
-    };
+        var viewContext = this;
+        viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
+        console.log(this.param("candidate-name"));
+        if (this.param("candidate-name") != "") {
+            var Vote = require("../models/vote.js");
+            var v = new Vote();
+            v.name = this.param("candidate-election");
+            v.option = this.param("candidate-name");
+            v.save(function(error) { // save the vote to the database.
+                if (error) {
+                console.log("\n -- Error saving vote: \n"+error+"\n");
+                }
 
+                else {
+                    Vote.find( {/* empty search criteria */}, function(err, votes) {
+                        if (err) console.log(err)
+                            else {
+                                console.log("\n --"+votes[0].name);
+                                console.log("\n --"+votes[0].option);
+                                console.log("\n --"+votes[1].name);
+                                console.log("\n --"+votes[1].option);
+                                viewContext.votes = votes; // an array of voters for use in the view. e.g. showing a list of users.
+                            }
+
+                            viewContext.render();
+                    });
+                }
+            });
+        }
+        viewContext.render();
+    };
 
 
     /*
