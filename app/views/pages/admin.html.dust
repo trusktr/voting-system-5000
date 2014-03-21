@@ -31,6 +31,7 @@
   </fieldset> 
 </form>
 </div>
+</div>
 
 <div class="row">
 <div class="large-12 columns">
@@ -46,6 +47,7 @@
     </label>
   </fieldset> 
 </form>
+</div>
 </div>
 
 <div class="row">
@@ -63,35 +65,9 @@
   </fieldset>
 </form>
 </div>
+</div>
 
         <br>
-
-        <div class="row">
-            <div id="voting-system-sidebar" class="large-3 medium-4 columns">
-                <div class="hide-for-small">
-                    <div class="sidebar">
-                        <h5>Foundation Documentation</h5>
-                        <form>
-                            <!--  <label>Search Documentation</label> -->
-                            <input type="search" placeholder="Search Docs: e.g. forms" id="autocomplete" tabindex="1" autocomplete="off">
-                        </form>
-
-                        <nav>
-                            <ul class="side-nav">
-                                <li class="heading">Setup</li>
-                                <li><a data-search="" href="index.html">Getting Started</a></li>
-                                <li><a data-search="Styles" href="css.html">CSS</a></li>
-
-                                <li class="divider"></li>
-                                <li class="heading">Structure</li>
-                                <li><a data-search="Breakpoints" href="media-queries.html">Media Queries</a></li>
-                                <li><a data-search="" href="components/visibility.html">Visibility</a></li>
-                            </ul>
-                        </nav>
-                    </div><!-- .sidebar -->
-                </div>
-            </div><!-- #voting-system-sidebar-->
-        </div><!--.row-->
     </div><!-- .large-12.columns -->
 </div><!-- .row -->
 {/body}

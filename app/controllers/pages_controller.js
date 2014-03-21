@@ -35,7 +35,7 @@ console.log('Setting up Pages controller.');
      */
     PagesController.root = function() {
         console.log('### pages#root');
-
+al
         /*
          * Example usage of a model:
          */
@@ -89,7 +89,22 @@ console.log('Setting up Pages controller.');
     };
 
     PagesController.admin = function() {
-        this.render();
+		var Vote = require("../models/vote.js");
+		var v = new Vote();
+		v.name = this.param("candidate-election");
+		v.option = this.param("candidate-name");
+		v.save(function(error) { // save the vote to the database.
+                console.log("\n -- Error saving vote: \n"+error+"\n");
+
+                Vote.find( {/* empty search criteria */}, function(err, votes) {
+                    if (err) console.log(err)
+                    else {
+					console.log("\n --"+votes[0].name);
+					viewContext.votes = votes; // an array of voters for use in the view. e.g. showing a list of users.
+
+                    viewContext.render();
+                });
+            });
     };
 
 
