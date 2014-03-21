@@ -77,6 +77,23 @@ console.log('Setting up Pages controller.');
         // PagesController functions/methods.
     };
 
+    PagesController.register = function() {
+        this.render();
+    };
+
+    PagesController.vote = function() {
+        this.render();
+    };
+    PagesController.results = function() {
+        this.render();
+    };
+
+    PagesController.admin = function() {
+        this.render();
+    };
+
+
+
     /*
      * An example to show how to execute things in order. This function
      * doesn't get called.

@@ -24,6 +24,10 @@ module.exports = function routes() {
 
 	// this.match('/', [lock]);
 	this.match('/', 'pages#root');
+	this.match('/register', 'pages#register');
+        this.match('/vote', 'pages#vote');
+        this.match('/results', 'pages#results');
+        this.match('/admin', 'pages#admin');
 
         // Don't worry about log in stuff yet. Technically we can do that in the
         // second assignment.
