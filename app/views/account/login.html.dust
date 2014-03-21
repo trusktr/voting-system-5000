@@ -1,0 +1,24 @@
+{>"../pages/skeleton" /}
+
+{<header} {!Put all header stuff here.!}
+{/header}
+
+{<body} {!Put all html content of the view here.!}
+<div class="container">
+    <div class="row">
+        <div class="large-4 large-offset-4 columns">
+            <h1>Login</h1>
+            <form action="/login" method="post">
+                <input type="text" name="username" placeholder="username" />
+                <input type="password" name="password" placeholder="password" />
+                <button type="submit">login</button>
+            </form>
+        </div>
+    </div>
+</div>
+{/body}
+
+{<foobar} {!Put all scripts here.!}
+    <script>
+    </script>
+{/foobar}

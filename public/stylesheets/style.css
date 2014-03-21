@@ -5,7 +5,8 @@
  */
 
 body {
-	font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    padding-top: 45px; /*set with js?*/
 }
 .row {max-width: 100%;}
 
@@ -13,6 +14,7 @@ body {
 #navBar {
     position: fixed;
     z-index: 1000;
+    top: 0;
 }
 nav.top-bar {
 }
@@ -21,7 +23,6 @@ nav.top-bar {
     display: block;
     overflow: hidden;
     position: relative;
-    margin-top: 45px; /*set with js?*/
 }
 
 #fiveThousand {
