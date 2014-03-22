@@ -5,34 +5,72 @@
 {/header}
 
 {<body}
-<form>
+<form action="{common.req.url}" method="post">
   <div class="row">
     <div class="large-12 columns">
-      <label>Voter Name
-        <input type="text" placeholder="large-12.columns" />
+      <label>Your Name
+        <input name="name" type="text" placeholder="First Middle Last" />
       </label>
     </div>
   </div>
   <div class="row">
     <div class="large-12 columns">
-      <label>Voter Social Security Number
-        <input type="password" placeholder="large-12.columns" />
+      <label>Your Social Security Number
+        <input name="ssn" type="password" placeholder="***-**-***" />
       </label>
     </div>
   </div>
   <div class="row">
     <div class="large-12 columns">
-      <label>Voter Address
-        <textarea placeholder="small-12.columns"></textarea>
+      <label>Street
+        <input name="street" type="text" placeholder="1234 Street Name"></textarea>
       </label>
     </div>
   </div>
+  <div class="row">
+    <div class="large-12 columns">
+      <label>City
+        <input name="city" type="text" placeholder="City" />
+      </label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-12 columns">
+      <label>State
+        <input name="state" type="text" placeholder="State" />
+      </label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-12 columns">
+      <label>Zipcode
+        <input name="zip" type="text" placeholder="12345" />
+      </label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-12 columns">
+      <label>Email Address
+        <input name="email" type="text" placeholder="example@example.com" />
+      </label>
+    </div>
+  </div>
+<button>Submit</button>
 </form>    
+
+<!--Register success message-->
+<div id="myModal" class="reveal-modal tiny" data-reveal>
+    <span>Thanks for registering, {voter.name}! <a href="/vote">Place your vote.</a></span>
+</div>
 	
 {/body}
 
 {<footer}
     <script>
-        // put all JavaScript here.
+        $(document).ready(function() {
+            {?registered}
+                $('#myModal').foundation('reveal', 'open');
+            {/registered}
+        });
     </script>
 {/footer}

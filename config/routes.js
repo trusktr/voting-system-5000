@@ -24,9 +24,11 @@ module.exports = function routes() {
 
 	//this.match(/^((?!^\/login$).)*$/, [lock]);
 	this.match('/', 'pages#root');
-	this.match('/register', 'pages#register');
+        this.match('/register', 'pages#register', {via: ['get','post']});
+        this.match('/vote', [lock]);
         this.match('/vote', 'pages#vote');
         this.match('/results', 'pages#results');
+        this.match('/admin', [lock]);
         this.match('/admin', 'pages#admin');
 
         // Don't worry about log in stuff yet. Technically we can do that in the

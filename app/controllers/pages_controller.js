@@ -25,7 +25,8 @@ console.log('Setting up Pages controller.');
                 {title:"Vote",             uri:"/vote"},
                 {title:"Check Results",    uri:"/results"},
                 {title:"Manage Election",  uri:"/admin"}
-            ]
+            ],
+            req: this.req
         };
         return this.next();
     };
@@ -39,10 +40,6 @@ console.log('Setting up Pages controller.');
         var viewContext = this;
         viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
 
-        console.log(" this is ");
-        this.app = "TESTERRRRRRRR";
-        console.log(this);
-
         /*
          * Example usage of a model:
          */
@@ -52,21 +49,12 @@ console.log('Setting up Pages controller.');
             var Voter = require("../models/voter.js");
             // Take a look at app/models/voter.js
 
-            var v = new Voter(); // instantiate a new voter.
-
-            v.name = "Ray Ban"; // set the voter's name.
-            v.save(function(error) { // save the voter to the database.
-                // We'll get an error in the console because we didn't set the
-                // required fields for the voter. Just access the main page of
-                // the app to trigger these actions.
-                console.log("\n -- Error saving voter: \n"+error+"\n");
-            });
-
             // When we have voters in the database, we can get some of them like
             // this:
             Voter.find( {/* empty search criteria */}, function(err, voters) {
+                console.log("Found?");
                 voters.forEach(function(voter) {
-                    console.log(" Voter's name: "+voter.name);
+                    console.log(" ########### Voter's name: "+voter.name);
                     // We'll see output in the console when we have voters.
                 });
             });
@@ -86,7 +74,37 @@ console.log('Setting up Pages controller.');
     PagesController.register = function() {
         var viewContext = this;
         viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
-        viewContext.render();
+
+        if (Object.keys(this.req.body).length > 0) { // if we have POST variables.
+            var post = this.req.body;
+            var Voter = require("../models/voter.js");
+            var voter = new Voter({
+                  ssn      : post.ssn
+                , name     : post.name
+                , street   : post.street
+                , city     : post.city
+                , state    : post.state
+                , zip      : post.zip
+                , email    : post.email
+            });
+            voter.save(function(err) {
+                if (err) {
+                    console.log(err);
+                    viewContext.error = err;
+                }
+                else {
+                    viewContext.registered = true;
+                    viewContext.voter = voter;
+                }
+                viewContext.render();
+            });
+        }
+        else if (Object.keys(this.req.query).length > 0) { // if we have GET variables.
+            viewContext.render();
+        }
+        else { // no GET or POST
+            viewContext.render();
+        }
     };
 
     PagesController.vote = function() {
@@ -104,34 +122,29 @@ console.log('Setting up Pages controller.');
     PagesController.admin = function() {
         var viewContext = this;
         viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
-        console.log(this.param("candidate-name"));
-        if (this.param("candidate-name") != "") {
+
+        // If we have the needed request parameters.
+        if (
+            typeof this.param("candidate-name") != "undefined"
+            && typeof this.param("candidate-election") != "undefined"
+        ) {
             var Vote = require("../models/vote.js");
             var v = new Vote();
             v.name = this.param("candidate-election");
             v.option = this.param("candidate-name");
             v.save(function(error) { // save the vote to the database.
                 if (error) {
-                console.log("\n -- Error saving vote: \n"+error+"\n");
+                    console.log(" -- Error saving vote instance: \n"+error+"\n");
+                    viewContext.error = error;
                 }
-
                 else {
-                    Vote.find( {/* empty search criteria */}, function(err, votes) {
-                        if (err) console.log(err)
-                            else {
-                                console.log("\n --"+votes[0].name);
-                                console.log("\n --"+votes[0].option);
-                                console.log("\n --"+votes[1].name);
-                                console.log("\n --"+votes[1].option);
-                                viewContext.votes = votes; // an array of voters for use in the view. e.g. showing a list of users.
-                            }
-
-                            viewContext.render();
-                    });
                 }
+                viewContext.render();
             });
         }
-        viewContext.render();
+        else { // else no request parameters.
+            viewContext.render();
+        }
     };
 
 
