@@ -55,22 +55,30 @@
       </label>
     </div>
   </div>
-<button>Submit</button>
-</form>    
+  <div class="row">
+    <div class="large-12 columns">
+        <button class="button radius">Submit</button>
+    </div>
+  </div>
+</form>
 
 <!--Register success message-->
 <div id="myModal" class="reveal-modal tiny" data-reveal>
-    <span>Thanks for registering, {voter.name}! <a href="/vote">Place your vote.</a></span>
+    <span>
+        {^error}Thanks for registering, {voter.name}.{/error}
+        {?error}Unable to process the request. Did you already register?{/error}&nbsp;
+        <a href="/vote">Place your vote!</a></span>
+    <a class="close-reveal-modal">&#215;</a>
 </div>
-	
+
 {/body}
 
 {<footer}
     <script>
         $(document).ready(function() {
-            {?registered}
+            {?modal}
                 $('#myModal').foundation('reveal', 'open');
-            {/registered}
+            {/modal}
         });
     </script>
 {/footer}

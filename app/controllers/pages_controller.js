@@ -90,10 +90,11 @@ console.log('Setting up Pages controller.');
             voter.save(function(err) {
                 if (err) {
                     console.log(err);
-                    viewContext.error = err;
+                    viewContext.error = "You may have already registered.";
+                    viewContext.modal = true;
                 }
                 else {
-                    viewContext.registered = true;
+                    viewContext.modal = true;
                     viewContext.voter = voter;
                 }
                 viewContext.render();
