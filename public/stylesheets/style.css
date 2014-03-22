@@ -4,6 +4,7 @@
  * ratio, touch abilities, etc.
  */
 
+a {outline: none;}
 body {
     font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
     padding-top: 45px; /*set with js?*/
