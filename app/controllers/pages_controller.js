@@ -110,46 +110,24 @@ console.log('Setting up Pages controller.');
 
     PagesController.vote = function() {
         var viewContext = this;
-		viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
-		if (Object.keys(this.req.body).length > 0) { // if we have POST variables.
-			var Vote = require("../models/vote.js");
-			Vote.find( {/* empty search criteria */}, function(err, votes) {
-					var topics = {};
-					console.log("Found?");
-					votes.forEach(function(vote) {
-						//create Topics (all votes with same name)
-						//
-						//send array of Topic to UI
-						//stuff
-					  
-					  // group them, so hmm...
-					  
-					  if (typeof topics[vote.name] == "undefined") { 
-						topics[vote.name] = {};
-						topics[vote.name].name = vote.name;
-						topics[vote.name].options = [];
-					  }
-					  topics[vote.name].options.push(vote.option);
-					});
-					// convert topics from object to array here.
-					var topicsArray;
-					for (var i=0; i<Object.keys(topics); i++) {
-					  topicsArray.push(topics[Object.keys(topics)[i]]);
-					}
-					
-					// there you go. That will create the topics array for the view.
-					
-					viewContext.topics = topicsArray; // give it to the view.
-					viewContext.render();
-				});	}			
-		else if (Object.keys(this.req.query).length > 0) { // if we have GET variables.
-            viewContext.render();
-        }
-        else { // no GET or POST
-            viewContext.render();
-        }
+        viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
+
+        var VoteTopic = require("../models/vote_topic.js");
+        VoteTopic.getVoteTopics(function(topics) {
+            viewContext.topics = topicsArray; // give it to the view.
+
+            if (Object.keys(this.req.body).length > 0) { // if we have POST variables.
+                viewContext.render();
+            }
+            else if (Object.keys(this.req.query).length > 0) { // if we have GET variables.
+                viewContext.render();
+            }
+            else { // no GET or POST
+                viewContext.render();
+            }
+        });
     };
-     
+
     PagesController.results = function() {
         var viewContext = this;
         viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
@@ -159,27 +137,17 @@ console.log('Setting up Pages controller.');
     PagesController.admin = function() {
         var viewContext = this;
         viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
-
-        // If we have the needed request parameters.
-        if (
-            typeof this.param("candidate-name") != "undefined"
-            && typeof this.param("candidate-election") != "undefined"
-        ) {
-            var Vote = require("../models/vote.js");
-            var v = new Vote();
-            v.name = this.param("candidate-election");
-            v.option = this.param("candidate-name");
-            v.save(function(error) { // save the vote to the database.
-                if (error) {
-                    console.log(" -- Error saving vote instance: \n"+error+"\n");
-                    viewContext.error = error;
-                }
-                else {
-                }
+        if (Object.keys(this.req.body).length > 0) { // if we have POST variables.
+            var VoteTopic = require("../models/vote_topic.js");
+            VoteTopic.getVoteTopics(function(topics) {
+                viewContext.topics = topicsArray; // give it to the view.
                 viewContext.render();
             });
         }
-        else { // else no request parameters.
+        else if (Object.keys(this.req.query).length > 0) { // if we have GET variables.
+            viewContext.render();
+        }
+        else { // no GET or POST
             viewContext.render();
         }
     };
