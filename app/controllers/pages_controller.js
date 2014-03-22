@@ -110,8 +110,18 @@ console.log('Setting up Pages controller.');
 
     PagesController.vote = function() {
         var viewContext = this;
-        viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
-        viewContext.render();
+		viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
+		var Vote = require("../models/vote.js");
+		Vote.find( {/* empty search criteria */}, function(err, votes) {
+                console.log("Found?");
+                votes.forEach(function(vote) {
+					//create Topics (all votes with same name)
+					//
+					//send array of Topic to UI
+                    //stuff
+                });
+            });
+       viewContext.render();
     };
 
     PagesController.results = function() {
