@@ -114,15 +114,17 @@ console.log('Setting up Pages controller.');
 
         var VoteTopic = require("../models/vote_topic.js");
         VoteTopic.getVoteTopics(function(topics) {
-            viewContext.topics = topicsArray; // give it to the view.
+            viewContext.topics = topics; // give it to the view.
 
             if (Object.keys(this.req.body).length > 0) { // if we have POST variables.
+                // Save the user's vote.
                 viewContext.render();
             }
             else if (Object.keys(this.req.query).length > 0) { // if we have GET variables.
+                // nothing for GET.
                 viewContext.render();
             }
-            else { // no GET or POST
+            else { // if no GET or POST
                 viewContext.render();
             }
         });
@@ -137,19 +139,23 @@ console.log('Setting up Pages controller.');
     PagesController.admin = function() {
         var viewContext = this;
         viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
-        if (Object.keys(this.req.body).length > 0) { // if we have POST variables.
-            var VoteTopic = require("../models/vote_topic.js");
-            VoteTopic.getVoteTopics(function(topics) {
-                viewContext.topics = topicsArray; // give it to the view.
+
+        var VoteTopic = require("../models/vote_topic.js");
+        VoteTopic.getVoteTopics(function(topics) {
+            viewContext.topics = topics; // give it to the view.
+
+            if (Object.keys(this.req.body).length > 0) { // if we have POST variables.
+                // Save the election configuration.
                 viewContext.render();
-            });
-        }
-        else if (Object.keys(this.req.query).length > 0) { // if we have GET variables.
-            viewContext.render();
-        }
-        else { // no GET or POST
-            viewContext.render();
-        }
+            }
+            else if (Object.keys(this.req.query).length > 0) { // if we have GET variables.
+                // nothing for GET.
+                viewContext.render();
+            }
+            else { // if no GET or POST
+                viewContext.render();
+            }
+        });
     };
 
 
