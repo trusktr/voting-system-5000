@@ -1,4 +1,4 @@
-{>skeleton /}
+{>skeleton/}
 
 {<header} {!Put all header stuff here.!}
 {/header}
@@ -16,37 +16,59 @@
             </div>
         </div>
 
+<div id="voteTopics">
+
+    <div class="row voteTopic">
+    <div class="large-12 columns">		
+    <form>
+      <fieldset>
+        <legend><h5>Vote Topic</h5></legend>
+
+            <label>Topic Name
+              <input type="text" name="topicName" placeholder="e.g. Vice President or Proposition 5000">
+            </label>
+            <label>Topic Type
+                <ul class="button-group radius vote-topic-type-buttons">
+                  <li><a href="multiple" class="button tiny">Multiple Choice</a></li>
+                  <li><a href="yesno" class="button tiny secondary">Yes/No</a></li>
+                </ul>
+            </label>
+            <label>Topic Description
+              <textarea type="text" name="topicName" placeholder="Description of the topic."></textarea>
+            </label>
+            <div class="topic-specifics multiple">
+                <label>Choices
+                </label>
+                    <div class="choices">
+                        <div class="row collapse topicChoice">
+                            <div class="small-3 large-1 columns">
+                              <span class="prefix">Choice:</span>
+                            </div>
+                            <div class="small-9 large-11 columns">
+                                <input type="text" name="" placeholder="Political McCandidateson">
+                            </div>
+                        </div>
+                    </div>
+                    <ul class="button-group radius vote-topic-add-option">
+                      <li><a href="multiple" class="button tiny secondary">+ Add Choice</a></li>
+                    </ul>
+            </div>
+            <div class="hide topic-specifics yesno">
+            </div>
+      </fieldset> 
+    </form>
+    </div>
+    </div><!-- .voteTopic -->
+
+</div><!-- #voteTopics -->
+
 <div class="row">
 <div class="large-12 columns">		
-<form>
-  <fieldset>
-    <legend>Manage Candidates</legend>
-
-    <label>Name 
-      <input type="text" placeholder="Candidate first and last name">
-    </label>
-	<label>Election todo: add multiple candidates with + button
-      <input type="text" placeholder="Candidate election">
-    </label>
-  </fieldset> 
-</form>
-</div>
-</div>
-
-<div class="row">
-<div class="large-12 columns">
-<form>
-  <fieldset>
-    <legend>Manage Election</legend>
-
-    <label>Name
-      <input type="text" placeholder="Proposal name">
-    </label>
-	<label>Election todo: add multiple proposals with + button
-      <input type="text" placeholder="Proposal description">
-    </label>
-  </fieldset> 
-</form>
+    <div class="button-bar">
+        <ul class="button-group">
+            <li><button id="add-vote-topic-button" class="button radius success">+ Add Vote Topic</button></li>
+        </ul>
+    </div>
 </div>
 </div>
 
@@ -72,7 +94,79 @@
 </div><!-- .row -->
 {/body}
 
-{<foobar} {!Put all scripts here.!}
+{<footer} {!Put all scripts here.!}
     <script>
+        $(document).ready(function() {
+
+            /*
+             *Generate sample elements from which to clone duplicates when the "+Add" buttons are pressed.
+             */
+            $(".voteTopic").first().clone().appendTo("body").addClass("sample hide");
+
+            /*
+             *Handle the buttons to select each topic's type.
+             */
+            $("body").on("click", ".vote-topic-type-buttons .button", function(event) {
+                var _button = $(this);
+                var _buttonGroup = _button.closest(".button-group");
+                _buttonGroup.find(".button").addClass("secondary");
+                _button.removeClass("secondary");
+
+                var _voteTopic = _button.closest(".voteTopic");
+                var _topicSpecifics = _voteTopic.find(".topic-specifics");
+                _topicSpecifics.addClass("hide");
+                switch(_button.attr("href")) {
+                    case "multiple":
+                        _topicSpecifics.filter(".multiple").removeClass("hide");
+                        break;
+                    case "yesno":
+                        _topicSpecifics.filter(".yesno").removeClass("hide");
+                        break;
+                    default:
+                }
+                event.preventDefault();
+            });
+
+            /*
+             *Handle the buttons to add new choices to multiple choice topics.
+             */
+            $("body").on("click", ".vote-topic-add-option .button", function(event) {
+                var _button = $(this);
+                var _voteTopicSample = $("body > .voteTopic.sample");
+                var _choices = _button.closest(".topic-specifics").find(".choices");
+                var _choiceSample = _voteTopicSample.find(".topicChoice").first();
+                _choiceSample.clone().appendTo(_choices);
+                event.preventDefault();
+            });
+
+            /*
+             *Handle the button to add new vote topics.
+             */
+            $("#add-vote-topic-button").on("click", function() {
+                var _voteTopicSample = $("body > .voteTopic.sample");
+                _voteTopicSample.clone().removeClass("hide").appendTo("#voteTopics");
+                event.preventDefault();
+            });
+
+            /*
+             *Set up the handler that saves everything automatically when the user is done typing or moving the mouse.
+             */
+            var saveTimeout;
+            $(document).on("keypress, mousemove", function(event) {
+                if (saveTimeout != null) {
+                    clearTimeout(saveTimeout);
+                }
+                saveTimeout = setTimeout(function() {
+                    var votes = [];
+                    $("#voteTopics .voteTopic").each(function() {
+                        var data = constructDataModel();
+                        var jsonString = JSON.stringify(data);
+                        $.post(url, {dataModel: jsonString}, function(data) {
+                            var doc = $(data); // our backend sends back HTML pages for now, no JSON.
+                        });
+                    });
+                }, 800);
+            });
+        });
     </script>
-{/foobar}
+{/footer}
