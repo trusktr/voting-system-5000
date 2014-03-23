@@ -152,70 +152,74 @@ console.log('Setting up Pages controller.');
             // Get election configuration from the POST data.
             var clientVoteTopics = JSON.parse(this.req.body.json).voteTopics;
 
-            // Save the election configuration.
-            async.forEach(clientVoteTopics, function(clientVoteTopic, forEachVoteTopicCallback) { // asynchronous forEach
-                var voteTopicSaveFunctions = [];
-                Vote.find({name: clientVoteTopic.name}, function(err, votesFromDB) {
-                    if (err) return forEachVoteTopicCallback(err);
+            /*
+             *Save the election configuration.
+             */
+            Vote.remove({}, function(){ // Remove all first. Yeah, this could be avoided, but it's a single-user use case with few entries in the DB.
+                async.forEach(clientVoteTopics, function(clientVoteTopic, forEachVoteTopicCallback) { // asynchronous forEach
+                    var voteTopicSaveFunctions = [];
+                    Vote.find({name: clientVoteTopic.name}, function(err, votesFromDB) {
+                        if (err) return forEachVoteTopicCallback(err);
 
-                    if (votesFromDB != null) { // if Votes exist, then the vote topic exists, so update it if the topic has different options.
-                        console.log(" -- Votes exists. Checking for changes...");
+                        if (votesFromDB != null) { // if Votes exist, then the vote topic exists, so update it if the topic has different options.
+                            console.log(" -- Votes exists. Checking for changes...");
 
-                        // detect changes
-                        var topicsMatch = true;
-                        if (clientVoteTopic.options.length == votesFromDB.length) {
-                            console.log(" -- Client vote topic matches length of DB vote topic.");
-                            votesFromDB.forEach(function(vote) { // synchronous forEach
-                                // if options don't match.
-                                if (clientVoteTopic.options.indexOf(vote.option) == -1) {
-                                    console.log(" -- Could not find matching option in DB vote topic for corresponding client vote topic option.");
-                                    topicsMatch = false;
-                                }
-                            });
-                        }
-                        else {
-                            console.log(" -- Client vote topic has different number of options than DB vote topic.");
-                            topicsMatch = false;
-                        }
+                            // detect changes
+                            var topicsMatch = true;
+                            if (clientVoteTopic.options.length == votesFromDB.length) {
+                                console.log(" -- Client vote topic matches length of DB vote topic.");
+                                votesFromDB.forEach(function(vote) { // synchronous forEach
+                                    // if options don't match.
+                                    if (clientVoteTopic.options.indexOf(vote.option) == -1) {
+                                        console.log(" -- Could not find matching option in DB vote topic for corresponding client vote topic option.");
+                                        topicsMatch = false;
+                                    }
+                                });
+                            }
+                            else {
+                                console.log(" -- Client vote topic has different number of options than DB vote topic.");
+                                topicsMatch = false;
+                            }
 
-                        // if the options of the same topic name don't match, the user must've
-                        // made changes, so save the changes..
-                        if (!topicsMatch) {
-                            console.log(" -- The client topic doesn't match the DB topic. Updating the DB topic...");
-                            voteTopicSaveFunctions.push(function(callback) {
-                                Vote.remove({name: clientVoteTopic.name}, function() {
-                                    VoteTopic.saveOne(clientVoteTopic, function(err) {
-                                        callback();
+                            // if the options of the same topic name don't match, the user must've
+                            // made changes, so save the changes..
+                            if (!topicsMatch) {
+                                console.log(" -- The client topic doesn't match the DB topic. Updating the DB topic...");
+                                voteTopicSaveFunctions.push(function(callback) {
+                                    Vote.remove({name: clientVoteTopic.name}, function() {
+                                        VoteTopic.saveOne(clientVoteTopic, function(err) {
+                                            callback();
+                                        });
                                     });
+                                });
+                            }
+                        }
+                        else { // otherwise we need to create the new Vote object representing one of the options of the vote topic.
+                            console.log(" -- Vote Topic does not exist in DB. Adding it to DB.");
+                            voteTopicSaveFunctions.push(function(callback) {
+                                VoteTopic.saveOne(clientVoteTopic, function(err) {
+                                    callback();
                                 });
                             });
                         }
-                    }
-                    else { // otherwise we need to create the new Vote object representing one of the options of the vote topic.
-                        console.log(" -- Vote Topic does not exist in DB. Adding it to DB.");
-                        voteTopicSaveFunctions.push(function(callback) {
-                            VoteTopic.saveOne(clientVoteTopic, function(err) {
-                                callback();
-                            });
+                        async.parallel(voteTopicSaveFunctions, function(err) {
+                            if (err) return forEachVoteTopicCallback(" -- Error: could not save one or more topics.");
+                            forEachVoteTopicCallback(null);
                         });
-                    }
-                    async.parallel(voteTopicSaveFunctions, function(err) {
-                        if (err) return forEachVoteTopicCallback(" -- Error: could not save one or more topics.");
-                        forEachVoteTopicCallback(null);
                     });
-                });
 
-            }, function(saveError) { // this function executes after all the find() operations have completed along with their callbacks.
-                // all changes to the election configuration have been saved (if no saveError).
-                VoteTopic.getAll(function(err, topics) {
-                    //TODO: make an array of errors. Make each template handle the array in skeleton.dust.
-                    if (saveError) { viewContext.modalError = true;
-                        viewContext.message = "Could not save vote topics."; }
-                    if (err) { viewContext.modalError = true;
-                        viewContext.message = "Could not get vote topics."; }
-                    viewContext.modalMessage = "All changes saved!";
-                    viewContext.voteTopics = topics;
-                    viewContext.render();
+                }, function(saveError) { // this function executes after all the find() operations have completed along with their callbacks.
+                    // all changes to the election configuration have been saved (if no saveError).
+                    VoteTopic.getAll(function(err, topics) {
+                        //TODO: make an array of errors. Make each template handle the array in skeleton.dust.
+                        if (saveError) { viewContext.modalError = true;
+                            viewContext.message = "Could not save vote topics."; }
+                            if (err) { viewContext.modalError = true;
+                                viewContext.message = "Could not get vote topics."; }
+                                viewContext.modalMessage = "All changes saved!";
+                                viewContext.voteTopics = topics;
+                                viewContext.render();
+                    });
                 });
             });
         }
