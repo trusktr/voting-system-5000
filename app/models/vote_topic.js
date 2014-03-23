@@ -9,13 +9,22 @@
 
 var VoteTopic = {};
 
-VoteTopic.getVoteTopics = function(callback /* (topics)*/ ) {
+/*
+ * Get all vote topics based on the Vote objects in the DB.
+ * The callback accepts a single argument: an array of topics.
+ */
+VoteTopic.getAll = function(callback) {
     var Vote = require("../models/vote.js");
 
     Vote.find( {/* empty search criteria */}, function(err, votes) {
+        if (err) return callback(err, null);
+
         var topics = {};
 
-        votes.forEach(function(vote) {
+        console.log(" -- Votes from DB:");
+        console.log(votes);
+
+        votes.forEach(function(vote) { // synchronous forEach
 
             if (typeof topics[vote.name] == "undefined") {
                 topics[vote.name] = {};
@@ -33,11 +42,34 @@ VoteTopic.getVoteTopics = function(callback /* (topics)*/ ) {
 
         // there we go. Now we have the topics array to pass to the callback.
 
-        callback(topicsArray);
+        callback(null, topicsArray);
     });
 }
 
-VoteTopic.saveVoteTopics = function() {
+/*
+ * Saves a vote topic to the DB in the form of multiple Vote objects.  The
+ * `topic` parameter accepts an object that contains a property "name" and a
+ * property "options". "name" is a string and "options" is an array of strings.
+ * The callback receives a String argument if an error ocurrs while saving.
+ */
+VoteTopic.saveOne = function(topic, callback) {
+    var Vote = require("./vote.js");
+    var async = require("async");
+    async.forEach(topic.options, function(option, callback) {
+        var vote = new Vote({
+            name: topic.name,
+            option: option
+        });
+        vote.save(function(err) {
+            if (err) return callback(err);
+            callback(null);
+        });
+    }, function(err) {
+        // all saves complete.
+        if (err) return callback(err);
+        console.log(" -- Vote topic '"+topic.name+"' saved to DB in the form of multiple Vote objects.");
+        callback(null);
+    });
 }
 
 module.exports = VoteTopic;

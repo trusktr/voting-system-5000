@@ -90,11 +90,11 @@ console.log('Setting up Pages controller.');
             voter.save(function(err) {
                 if (err) {
                     console.log(err);
-                    viewContext.error = "You may have already registered.";
-                    viewContext.modal = true;
+                    viewContext.error = true;
+                    viewContext.message = "You may have already registered.";
                 }
                 else {
-                    viewContext.modal = true;
+                    viewContext.message = "Thanks for registering, "+voter.name+"! <a href='/vote'>Place your vote.</a>";
                     viewContext.voter = voter;
                 }
                 viewContext.render();
@@ -113,7 +113,7 @@ console.log('Setting up Pages controller.');
         viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
 
         var VoteTopic = require("../models/vote_topic.js");
-        VoteTopic.getVoteTopics(function(topics) {
+        VoteTopic.getAll(function(topics) {
             viewContext.topics = topics; // give it to the view.
 
             if (Object.keys(this.req.body).length > 0) { // if we have POST variables.
@@ -140,22 +140,104 @@ console.log('Setting up Pages controller.');
         var viewContext = this;
         viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
 
-        var VoteTopic = require("../models/vote_topic.js");
-        VoteTopic.getVoteTopics(function(topics) {
-            viewContext.topics = topics; // give it to the view.
+        var async = require("async"); // control flow tool for calling multiple asynchronous functions.
 
-            if (Object.keys(this.req.body).length > 0) { // if we have POST variables.
-                // Save the election configuration.
+        var Vote = require("../models/vote.js");
+        var VoteTopic = require("../models/vote_topic.js");
+
+        if (Object.keys(this.req.body).length > 0) { // if we have POST variables.
+
+            console.log(" --- POST REQUEST");
+
+            // Get election configuration from the POST data.
+            var clientVoteTopics = JSON.parse(this.req.body.json).voteTopics;
+
+            // Save the election configuration.
+            async.forEach(clientVoteTopics, function(clientVoteTopic, forEachVoteTopicCallback) { // asynchronous forEach
+                var voteTopicSaveFunctions = [];
+                Vote.find({name: clientVoteTopic.name}, function(err, votesFromDB) {
+                    if (err) return forEachVoteTopicCallback(err);
+
+                    if (votesFromDB != null) { // if Votes exist, then the vote topic exists, so update it if the topic has different options.
+                        console.log(" -- Votes exists. Checking for changes...");
+
+                        // detect changes
+                        var topicsMatch = true;
+                        if (clientVoteTopic.options.length == votesFromDB.length) {
+                            console.log(" -- Client vote topic matches length of DB vote topic.");
+                            votesFromDB.forEach(function(vote) { // synchronous forEach
+                                // if options don't match.
+                                if (clientVoteTopic.options.indexOf(vote.option) == -1) {
+                                    console.log(" -- Could not find matching option in DB vote topic for corresponding client vote topic option.");
+                                    topicsMatch = false;
+                                }
+                            });
+                        }
+                        else {
+                            console.log(" -- Client vote topic has different number of options than DB vote topic.");
+                            topicsMatch = false;
+                        }
+
+                        // if the options of the same topic name don't match, the user must've
+                        // made changes, so save the changes..
+                        if (!topicsMatch) {
+                            console.log(" -- The client topic doesn't match the DB topic. Updating the DB topic...");
+                            voteTopicSaveFunctions.push(function(callback) {
+                                Vote.remove({name: clientVoteTopic.name}, function() {
+                                    VoteTopic.saveOne(clientVoteTopic, function(err) {
+                                        callback();
+                                    });
+                                });
+                            });
+                        }
+                    }
+                    else { // otherwise we need to create the new Vote object representing one of the options of the vote topic.
+                        console.log(" -- Vote Topic does not exist in DB. Adding it to DB.");
+                        voteTopicSaveFunctions.push(function(callback) {
+                            VoteTopic.saveOne(clientVoteTopic, function(err) {
+                                callback();
+                            });
+                        });
+                    }
+                    async.parallel(voteTopicSaveFunctions, function(err) {
+                        if (err) return forEachVoteTopicCallback(" -- Error: could not save one or more topics.");
+                        forEachVoteTopicCallback(null);
+                    });
+                });
+
+            }, function(saveError) { // this function executes after all the find() operations have completed along with their callbacks.
+                // all changes to the election configuration have been saved (if no saveError).
+                VoteTopic.getAll(function(err, topics) {
+                    //TODO: make an array of errors. Make each template handle the array in skeleton.dust.
+                    if (saveError) { viewContext.modalError = true;
+                        viewContext.message = "Could not save vote topics."; }
+                    if (err) { viewContext.modalError = true;
+                        viewContext.message = "Could not get vote topics."; }
+                    viewContext.modalMessage = "All changes saved!";
+                    viewContext.voteTopics = topics;
+                    viewContext.render();
+                });
+            });
+        }
+        else if (Object.keys(this.req.query).length > 0) { // if we have GET variables.
+            // nothing for GET.
+            VoteTopic.getAll(function(topics) {
+                if (err) { viewContext.error = true;
+                    viewContext.message = "Error: Could not get vote topics."; }
+                viewContext.voteTopics = topics;
                 viewContext.render();
-            }
-            else if (Object.keys(this.req.query).length > 0) { // if we have GET variables.
-                // nothing for GET.
+            });
+        }
+        else { // if no GET or POST
+            //Vote.find(function(err, topics) {
+            VoteTopic.getAll(function(err, topics) {
+                console.log(topics);
+                if (err) { viewContext.error = true;
+                    viewContext.message = "Error: Could not get vote topics."; }
+                viewContext.voteTopics = topics;
                 viewContext.render();
-            }
-            else { // if no GET or POST
-                viewContext.render();
-            }
-        });
+            });
+        }
     };
 
 
@@ -193,30 +275,6 @@ console.log('Setting up Pages controller.');
                     // Now the page gets rendered after we've attempted to
                     // save an invalid voter, followed by having retrieved
                     // all voters.
-                });
-            });
-    };
-
-    /*
-     * Another shorter way to do the same.
-     */
-    PagesController.example2 = function() {
-
-            var viewContext = this;
-            viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
-
-            var Voter = require("../models/voter.js");
-            var v = new Voter(); // instantiate a new voter.
-
-            v.name = "Ray Ban"; // set the voter's name.
-            v.save(function(error) { // save the voter to the database.
-                console.log("\n -- Error saving voter: \n"+error+"\n");
-
-                Voter.find( {/* empty search criteria */}, function(err, voters) {
-                    if (err) console.log(err)
-                    else viewContext.voters = voters; // an array of voters for use in the view. e.g. showing a list of users.
-
-                    viewContext.render();
                 });
             });
     };

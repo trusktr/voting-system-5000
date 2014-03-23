@@ -70,6 +70,16 @@
             </footer>
         </div><!--.container-->
 
+        <!-- Modal dialog box used for info like errors, etc. -->
+        <ol class="joyride-list" data-joyride>
+          <li data-id="" data-text="OK" data-options="tip_location: top">
+            <p class="modalMessage" id="{?modalMessage}modalMessage{/modalMessage}">
+                {?modalError}Error: {/modalError}
+                {?modalMessage}{modalMessage}{/modalMessage}
+            </p>
+          </li>
+        </ol>
+
         <!--SCRIPTS-->
         <!--<script src="/javascripts/jquery-1.11.0.min.js"></script>-->
         <script src="/foundation-5.2.1/js/vendor/jquery.js"></script>

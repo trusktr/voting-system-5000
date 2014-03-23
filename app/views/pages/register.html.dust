@@ -62,22 +62,13 @@
   </div>
 </form>
 
-<!--Register success message-->
-<div id="myModal" class="reveal-modal tiny" data-reveal>
-    <span>
-        {^error}Thanks for registering, {voter.name}.{/error}
-        {?error}Unable to process the request. Did you already register?{/error}&nbsp;
-        <a href="/vote">Place your vote!</a></span>
-    <a class="close-reveal-modal">&#215;</a>
-</div>
-
 {/body}
 
 {<footer}
     <script>
         $(document).ready(function() {
             {?modal}
-                $('#myModal').foundation('reveal', 'open');
+                $(document).foundation('joyride', 'start');
             {/modal}
         });
     </script>

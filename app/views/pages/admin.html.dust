@@ -33,8 +33,8 @@
                   <li><a href="yesno" class="button tiny secondary">Yes/No</a></li>
                 </ul>
             </label>
-            <label>Topic Description
-              <textarea type="text" name="topicName" placeholder="Description of the topic."></textarea>
+            <label class="hide">Topic Description
+              <textarea type="text" name="topicDescription" placeholder="Description of the topic."></textarea>
             </label>
             <div class="topic-specifics multiple">
                 <label>Choices
@@ -66,7 +66,17 @@
 <div class="large-12 columns">		
     <div class="button-bar">
         <ul class="button-group">
-            <li><button id="add-vote-topic-button" class="button radius success">+ Add Vote Topic</button></li>
+            <li><button id="add-vote-topic-button" class="button radius secondary">+ Add Vote Topic</button></li>
+        </ul>
+    </div>
+</div>
+</div>
+
+<div class="row">
+<div class="large-12 columns">
+    <div class="button-bar">
+        <ul class="button-group">
+            <li><button id="save-changes-button" class="button radius success">Save Changes</button></li>
         </ul>
     </div>
 </div>
@@ -144,29 +154,64 @@
              */
             $("#add-vote-topic-button").on("click", function() {
                 var _voteTopicSample = $("body > .voteTopic.sample");
-                _voteTopicSample.clone().removeClass("hide").appendTo("#voteTopics");
+                _voteTopicSample.clone().removeClass("hide sample").appendTo("#voteTopics");
                 event.preventDefault();
             });
 
             /*
              *Set up the handler that saves everything automatically when the user is done typing or moving the mouse.
              */
-            var saveTimeout;
-            $(document).on("keypress, mousemove", function(event) {
-                if (saveTimeout != null) {
-                    clearTimeout(saveTimeout);
-                }
-                saveTimeout = setTimeout(function() {
-                    var votes = [];
-                    $("#voteTopics .voteTopic").each(function() {
-                        var data = constructDataModel();
-                        var jsonString = JSON.stringify(data);
-                        $.post(url, {dataModel: jsonString}, function(data) {
-                            var doc = $(data); // our backend sends back HTML pages for now, no JSON.
-                        });
+            $("#save-changes-button").on("click", function(event) {
+                var votes = [];
+                $("#voteTopics .voteTopic").each(function() {
+                    var data = constructDataModel();
+                    var jsonString = JSON.stringify(data);
+                    $.post("/admin", {json: jsonString}, function(data) {
+                        var _doc = $(data);
+                        /*our backend sends back HTML pages for now, no JSON.*/
+                        var _thisBody = $("body");
+                        console.log(_doc.find("#modalMessage").length > 0);
+                        if (_doc.find("#modalMessage").length > 0) {
+                            $(".modalMessage").html(_doc.find("#modalMessage").html());
+                            if ($(".joyride-tip-guide").length > 0) {
+                                $(document).foundation('joyride', 'stop');
+                            }
+                            $(document).foundation('joyride', 'start');
+                        }
+                        else {
+                            console.log("Vote topics saved.");
+                        }
                     });
-                }, 800);
+                });
             });
+
+            function constructDataModel() {
+                var dataModel = { voteTopics: [] };
+
+                $(".voteTopic:not(.sample)").each(function() {
+                    var _voteTopic = $(this);
+                    var topic = {};
+
+                    topic.name = _voteTopic.find("input[name=topicName]").val();
+                    topic.options = [];
+                    if (_voteTopic.find(".vote-topic-type-buttons a:not(.secondary)").is("[href=multiple]")) {
+                        _voteTopic.find(".topic-specifics.multiple input").each(function() {
+                            var option = $(this).val();
+                            topic.options.push(option);
+                        });
+                    }
+                    else if (_voteTopic.find(".vote-topic-type-buttons a:not(.secondary)").is("[href=yesno]")) {
+                        topic.options = ["Yes","No"];
+                    }
+                    dataModel.voteTopics.push(topic);
+                });
+                console.log(dataModel);
+                return dataModel;
+            }
+
+            {#voteTopics}
+                console.log("{name}");
+            {/voteTopics}
         });
     </script>
 {/footer}
