@@ -3,9 +3,9 @@ var mongoose = require("mongoose"),
     Schema = mongoose.Schema,
     ObjectId = Schema.ObjectId;
 
-module.exports = mongoose.model('Voter', new Schema({
+var VoterSchema = new Schema({
     voter_id     : ObjectId
-    , ssn        : { type: Number, max: 999999999, required: true }
+    , ssn        : { type: Number, max: 999999999, required: true, unique: true }
     , name       : { type: String, required: true }
     , street     : { type: String, required: true }
     , city       : { type: String, required: true }
@@ -15,4 +15,8 @@ module.exports = mongoose.model('Voter', new Schema({
     , voted      : { type: Boolean, default: false }
     , votes_hash : String
     , mod_date   : { type: Date, default: Date.now }
-}));
+});
+VoterSchema.plugin(require('mongoose-unique-validator'));
+
+module.exports = mongoose.model('Voter', VoterSchema);
+

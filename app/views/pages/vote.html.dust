@@ -44,25 +44,27 @@
     <!-- This has been source ordered to come first in the markup (and on small devices) but to be to the right of the nav on larger screens -->
     <div class="large-9 columns">
 
-      <!-- Feed Entry -->
+	{#topics}
+    {
+	<!-- Feed Entry --><!-- This to be data pulled from db -->
       <div class="row">
         <div class="large-2 columns small-3"><img src="http://placehold.it/80x80&text=[img]" /></div>
         <div class="large-10 columns">
-          <p><strong>Title of Race and/or Proposition</strong></p>
+          <p><strong>VAR: Title of Race and/or Proposition</strong></p>
 
           <h6>Please make your selection below</h6>
           <div class="row">
-            <div class="large-2 columns small-3"><img src="http://placehold.it/50x50&text=[img]" /></div>
-            <div class="large-10 columns"><p>Political McCandidateson</p></div>
-          </div>
-          <div class="row">
-            <div class="large-2 columns small-3"><img src="http://placehold.it/50x50&text=[img]" /></div>
-            <div class="large-10 columns"><p>Otherguy Officerunner</p></div>
-          </div>
+            <div class="large-10 columns"> <!-- most of these are going to be VARs -->
+				<input type="radio" name="race1" value="option1" id="option1"><label for="option1">option1</label>
+				<input type="radio" name="race1" value="option2" id="option2"><label for="option2">option2</label>
+				<input type="radio" name="race1" value="option3" id="option3"><label for="option3">option3</label>
+			</div>
+          </div>	  
         </div>
       </div>
       <!-- End Feed Entry -->
-
+	}
+	{/topics}
       <hr />
 
     </div>
