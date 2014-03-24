@@ -21,12 +21,10 @@ VoteTopic.getAll = function(callback) {
 
         var topics = {};
 
-        console.log(" -- Votes from DB:");
-        console.log(votes);
-
         votes.forEach(function(vote) { // synchronous forEach
 
             if (typeof topics[vote.name] == "undefined") {
+                console.log(" -- Generating new vote topic from existing votes.");
                 topics[vote.name] = {};
                 topics[vote.name].name = vote.name;
                 topics[vote.name].options = [];
@@ -35,8 +33,27 @@ VoteTopic.getAll = function(callback) {
         });
 
         // convert topics from object to array.
-        var topicsArray;
-        for (var i=0; i<Object.keys(topics); i++) {
+        var topicsArray = [];
+        for (var i=0; i<Object.keys(topics).length; i++) {
+
+            /*
+             *Determine if it's multiple choice or not. indicate this in a "yesno" boolean property.
+             */
+            var yesno = false;
+            if (topics[Object.keys(topics)[i]].options.length == 2) {
+                console.log("------------- length:");
+                console.log(topics[Object.keys(topics)[i]].options.length);
+                if (topics[Object.keys(topics)[i]].options.indexOf("Yes") > -1 && topics[Object.keys(topics)[i]].options.indexOf("No") > -1) {
+                    console.log("------------- keyfound: true");
+                    console.log(topics[Object.keys(topics)[i]].options.length);
+                    yesno = true;
+                }
+            }
+            topics[Object.keys(topics)[i]].yesno = yesno;
+
+            console.log(" ------------------ "+Object.keys(topics)[i]+" yesno: ");
+            console.log(yesno);
+
             topicsArray.push(topics[Object.keys(topics)[i]]);
         }
 
@@ -55,7 +72,13 @@ VoteTopic.getAll = function(callback) {
 VoteTopic.saveOne = function(topic, callback) {
     var Vote = require("./vote.js");
     var async = require("async");
+    console.log("=------ making call to async.forEach.");
+    var counter = 0;
     async.forEach(topic.options, function(option, callback) {
+        counter++;
+        console.log("OPTION:-----------------------------------");
+        console.log(option);
+        console.log("------------------------------------");
         var vote = new Vote({
             name: topic.name,
             option: option
@@ -65,9 +88,11 @@ VoteTopic.saveOne = function(topic, callback) {
             callback(null);
         });
     }, function(err) {
-        // all saves complete.
         if (err) return callback(err);
+        // all saves complete.
         console.log(" -- Vote topic '"+topic.name+"' saved to DB in the form of multiple Vote objects.");
+        console.log("#############################################");
+        console.log(counter);
         callback(null);
     });
 }

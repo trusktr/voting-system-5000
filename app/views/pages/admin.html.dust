@@ -18,67 +18,22 @@
 
 <div id="voteTopics">
 
-    <div class="row voteTopic">
-    <div class="large-12 columns">		
-    <form>
-      <fieldset>
-        <legend><h5>Vote Topic</h5></legend>
 
-            <label>Topic Name
-              <input type="text" name="topicName" placeholder="e.g. Vice President or Proposition 5000">
-            </label>
-            <label>Topic Type
-                <ul class="button-group radius vote-topic-type-buttons">
-                  <li><a href="multiple" class="button tiny">Multiple Choice</a></li>
-                  <li><a href="yesno" class="button tiny secondary">Yes/No</a></li>
-                </ul>
-            </label>
-            <label class="hide">Topic Description
-              <textarea type="text" name="topicDescription" placeholder="Description of the topic."></textarea>
-            </label>
-            <div class="topic-specifics multiple">
-                <label>Choices
-                </label>
-                    <div class="choices">
-                        <div class="row collapse topicChoice">
-                            <div class="small-3 large-1 columns">
-                              <span class="prefix">Choice:</span>
-                            </div>
-                            <div class="small-9 large-11 columns">
-                                <input type="text" name="" placeholder="Political McCandidateson">
-                            </div>
-                        </div>
-                    </div>
-                    <ul class="button-group radius vote-topic-add-option">
-                      <li><a href="multiple" class="button tiny secondary">+ Add Choice</a></li>
-                    </ul>
-            </div>
-            <div class="hide topic-specifics yesno">
-            </div>
-      </fieldset> 
-    </form>
-    </div>
-    </div><!-- .voteTopic -->
+    {?voteTopics} {! If we have vote topics. !}
+        {#voteTopics} {! For each vote topic. !}
+            {>vote_topic/} {! Use the vote_topic.dust template. !}
+        {/voteTopics}
+    {/voteTopics}
+    {^voteTopics} {! If we don't have vote topics. !}
+        {>vote_topic/} {! Use the vote_topic.dust template. !}
+    {/voteTopics}
 
 </div><!-- #voteTopics -->
 
 <div class="row">
-<div class="large-12 columns">		
-    <div class="button-bar">
-        <ul class="button-group">
-            <li><button id="add-vote-topic-button" class="button radius secondary">+ Add Vote Topic</button></li>
-        </ul>
-    </div>
-</div>
-</div>
-
-<div class="row">
 <div class="large-12 columns">
-    <div class="button-bar">
-        <ul class="button-group">
-            <li><button id="save-changes-button" class="button radius success">Save Changes</button></li>
-        </ul>
-    </div>
+        <button id="add-vote-topic-button" class="button radius secondary">+ Add Vote Topic</button>
+        <button id="save-changes-button" class="button right radius success">Save Changes</button>
 </div>
 </div>
 
@@ -87,13 +42,13 @@
 <form>
   <fieldset>
     <legend>Manage Election</legend>
-  
+
       <label>Election Status</label>
       <input type="radio" name="status" value="Pre-election" id="Pre-election"><label for="Pre-election">Pre-election</label>
       <input type="radio" name="status" value="Registration" id="Registration"><label for="Registration">Registration</label>
 	  <input type="radio" name="status" value="Voting" id="Voting"><label for="Voting">Voting</label>
 	  <input type="radio" name="status" value="Post-election" id="Post-election"><label for="Post-election">Post-election</label>
-    
+
   </fieldset>
 </form>
 </div>
@@ -109,12 +64,21 @@
         $(document).ready(function() {
 
             /*
-             *Generate sample elements from which to clone duplicates when the "+Add" buttons are pressed.
+             * Generate sample elements from which to clone duplicates when the "+Add" buttons are pressed.
              */
-            $(".voteTopic").first().clone().appendTo("body").addClass("sample hide");
+            var _sampleVoteTopic = $(".voteTopic").first().clone();
+            _sampleVoteTopic.appendTo("body").addClass("sample hide");
+            _sampleVoteTopic.find("input[name=topicName]").val("");
+            _sampleVoteTopic.find(".vote-topic-type-buttons a").removeClass("secondary");
+            _sampleVoteTopic.find("a[href=yesno]").addClass("secondary");
+            _sampleVoteTopic.find("textarea").text("").val("");
+            var _sampleChoice = _sampleVoteTopic.find(".topic-specifics.multiple .choices .topicChoice").first().clone();
+            _sampleChoice.find("input").val("");
+            _sampleVoteTopic.find(".topic-specifics.multiple .choices").html("");
+            _sampleVoteTopic.find(".topic-specifics.multiple .choices").append(_sampleChoice);
 
             /*
-             *Handle the buttons to select each topic's type.
+             * Handle the buttons to select each topic's type.
              */
             $("body").on("click", ".vote-topic-type-buttons .button", function(event) {
                 var _button = $(this);
@@ -159,29 +123,27 @@
             });
 
             /*
-             *Set up the handler that saves everything automatically when the user is done typing or moving the mouse.
+             * Handle the save button
              */
             $("#save-changes-button").on("click", function(event) {
                 var votes = [];
-                $("#voteTopics .voteTopic").each(function() {
-                    var data = constructDataModel();
-                    var jsonString = JSON.stringify(data);
-                    $.post("/admin", {json: jsonString}, function(data) {
-                        var _doc = $(data);
-                        /*our backend sends back HTML pages for now, no JSON.*/
-                        var _thisBody = $("body");
-                        console.log(_doc.find("#modalMessage").length > 0);
-                        if (_doc.find("#modalMessage").length > 0) {
-                            $(".modalMessage").html(_doc.find("#modalMessage").html());
-                            if ($(".joyride-tip-guide").length > 0) {
-                                $(document).foundation('joyride', 'stop');
-                            }
-                            $(document).foundation('joyride', 'start');
+                var data = constructDataModel();
+                var jsonString = JSON.stringify(data);
+                $.post("/admin", {json: jsonString}, function(data) {
+                    var _doc = $(data);
+                    /*our backend sends back HTML pages for now, no JSON.*/
+                    var _thisBody = $("body");
+                    console.log(_doc.find("#modalMessage").length > 0);
+                    if (_doc.find("#modalMessage").length > 0) {
+                        $(".modalMessage").html(_doc.find("#modalMessage").html());
+                        if ($(".joyride-tip-guide").length > 0) {
+                            $(document).foundation('joyride', 'stop');
                         }
-                        else {
-                            console.log("Vote topics saved.");
-                        }
-                    });
+                        $(document).foundation('joyride', 'start');
+                    }
+                    else {
+                        console.log("Vote topics saved.");
+                    }
                 });
             });
 
@@ -209,9 +171,19 @@
                 return dataModel;
             }
 
-            {#voteTopics}
-                console.log("{name}");
-            {/voteTopics}
+            /*
+             *Handle the delete topic button
+             */
+            $("body").on("click", ".delete_vote_topic_button", function() {
+                $(this).closest(".voteTopic").remove();
+            });
+
+            /*
+             *Handle the delete choice button
+             */
+            $("body").on("click", ".delete_choice_button", function() {
+                $(this).closest(".topicChoice").remove();
+            });
         });
     </script>
 {/footer}
