@@ -11,7 +11,7 @@
             <div class="large-12 columns">
                 <div id="titlePanel" class="panel">
                     Welcome to
-                    <h1 id="{common.title}">Voting System <span id="fiveThousand">5000</span></h1>
+                    <h1 id="{common.title}">Voting System <span id="fiveThousand" class="neg angle-10 raise-2">5000</span></h1>
                 </div>
             </div>
         </div>
@@ -25,19 +25,19 @@
 
                 <ul id="voting-system-main-orbit" id="featured" data-orbit>
                     <li>
-                        <img src="http://placehold.it/1200x500&text=Slide Image 1" alt="slide image">
+                        <img src="/images/votefeet.jpg" alt="slide image">
                         <div class="orbit-caption">
                             Place your vote today!
                         </div>
                     </li>
                     <li>
-                        <img src="http://placehold.it/1200x500&text=Slide Image 2" alt="slide image">
+                        <img src="/images/votetable.jpg" alt="slide image">
                         <div class="orbit-caption">
                             Every vote counts!
                         </div>
                     </li>
                     <li>
-                        <img src="http://placehold.it/1200x500&text=Slide Image 3" alt="slide image">
+                        <img src="/images/votehere.jpg" alt="slide image">
                         <div class="orbit-caption">
                             YOU can make a difference.
                         </div>
@@ -49,9 +49,7 @@
 
             <!-- Mobile Header -->
             <div class="large-12 columns show-for-small">
-
-                <img src="http://placehold.it/1200x700&text=Mobile Header">
-
+                <img src="/images/votefeet.jpg" alt="slide image">
             </div>
             <!-- End Mobile Header -->
 
@@ -59,32 +57,6 @@
         <!-- End Banner -->
         <br>
 
-        <div class="row">
-            <div id="voting-system-sidebar" class="large-3 medium-4 columns">
-                <div class="hide-for-small">
-                    <div class="sidebar">
-                        <h5>Foundation Documentation</h5>
-                        <form>
-                            <!--  <label>Search Documentation</label> -->
-                            <input type="search" placeholder="Search Docs: e.g. forms" id="autocomplete" tabindex="1" autocomplete="off">
-                        </form>
-
-                        <nav>
-                            <ul class="side-nav">
-                                <li class="heading">Setup</li>
-                                <li><a data-search="" href="index.html">Getting Started</a></li>
-                                <li><a data-search="Styles" href="css.html">CSS</a></li>
-
-                                <li class="divider"></li>
-                                <li class="heading">Structure</li>
-                                <li><a data-search="Breakpoints" href="media-queries.html">Media Queries</a></li>
-                                <li><a data-search="" href="components/visibility.html">Visibility</a></li>
-                            </ul>
-                        </nav>
-                    </div><!-- .sidebar -->
-                </div>
-            </div><!-- #voting-system-sidebar-->
-        </div><!--.row-->
     </div><!-- .large-12.columns -->
 </div><!-- .row -->
 {/body}

@@ -10,8 +10,7 @@
         <div class="row">
             <div class="large-12 columns">
                 <div id="titlePanel" class="panel">
-                    Welcome to
-                    <h1 id="{common.title}">Voting System <span id="fiveThousand">5000</span></h1>
+                    <h1 id="{title}">Manage Elections<span id="fiveThousand" class="neg angle-10 raise-3">Manage</span></h1>
                 </div>
             </div>
         </div>

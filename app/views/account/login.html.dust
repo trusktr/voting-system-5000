@@ -4,10 +4,18 @@
 {/header}
 
 {<body} {!Put all html content of the view here.!}
+
+        <div class="row">
+            <div class="large-12 columns">
+                <div id="titlePanel" class="panel">
+                    <h1 id="{title}">Login<span id="fiveThousand" class="neg angle-10 raise-1">Login</span></h1>
+                </div>
+            </div>
+        </div>
+
 <div class="container">
     <div class="row">
-        <div class="large-4 large-offset-4 columns">
-            <h1>Login</h1>
+        <div class="large-4 columns">
             <form action="/login" method="post">
                 <input type="text" name="username" placeholder="username" />
                 <input type="password" name="password" placeholder="password" />

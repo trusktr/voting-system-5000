@@ -4,54 +4,156 @@
  * ratio, touch abilities, etc.
  */
 
-a {outline: none;}
+/* --------------- Generic */
+
 body {
     font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
     padding-top: 45px; /*set with js?*/
 }
-.row {max-width: 100%;}
+    a {outline: none;}
+    .row {max-width: 100%;}
 
+/* ------------------ Slight Angles */
 
-#navBar {
-    position: fixed;
-    z-index: 100;
-    top: 0;
-}
-nav.top-bar {
-}
+    .angle-1.neg {
+        transform: rotate(-1deg);
+        -webkit-transform: rotate(-1deg);
+        -moz-transform: rotate(-1deg);
+        -ms-transform: rotate(-1deg);
+    }
 
-#titlePanel {
-    display: block;
-    overflow: hidden;
-    position: relative;
-    margin-top: -1em;
-}
+    .angle-2.neg {
+        transform: rotate(-2deg);
+        -webkit-transform: rotate(-2deg);
+        -moz-transform: rotate(-2deg);
+        -ms-transform: rotate(-2deg);
+    }
 
-#fiveThousand {
-    color: #ddd;
-    display: block;
-    font-size: 4em;
-    font-weight: bold;
-    left: 2em;
-    position: absolute;
-    top: -0.2em;
-    transform: rotate(-10deg);
-    -webkit-transform: rotate(-10deg);
-    -moz-transform: rotate(-10deg);
-    -ms-transform: rotate(-10deg);
-}
+    .angle-3.neg {
+        transform: rotate(-3deg);
+        -webkit-transform: rotate(-3deg);
+        -moz-transform: rotate(-3deg);
+        -ms-transform: rotate(-3deg);
+    }
 
-[data-orbit] img {
-    width: 100%;
-}
+    .angle-4.neg {
+        transform: rotate(-4deg);
+        -webkit-transform: rotate(-4deg);
+        -moz-transform: rotate(-4deg);
+        -ms-transform: rotate(-4deg);
+    }
 
-#voting-system-sidebar .label {
-    background: none repeat scroll 0 0 #DDDDDD;
-    border-radius: 3px;
-    color: #777777;
-    margin-left: 5px;
-}
+    .angle-5.neg {
+        transform: rotate(-5deg);
+        -webkit-transform: rotate(-5deg);
+        -moz-transform: rotate(-5deg);
+        -ms-transform: rotate(-5deg);
+    }
 
-#viewContent {
-    margin-top: 1em;
-}
+    .angle-6.neg {
+        transform: rotate(-6deg);
+        -webkit-transform: rotate(-6deg);
+        -moz-transform: rotate(-6deg);
+        -ms-transform: rotate(-6deg);
+    }
+
+    .angle-7.neg {
+        transform: rotate(-7deg);
+        -webkit-transform: rotate(-7deg);
+        -moz-transform: rotate(-7deg);
+        -ms-transform: rotate(-7deg);
+    }
+
+    .angle-8.neg {
+        transform: rotate(-8deg);
+        -webkit-transform: rotate(-8deg);
+        -moz-transform: rotate(-8deg);
+        -ms-transform: rotate(-8deg);
+    }
+
+    .angle-9.neg {
+        transform: rotate(-9deg);
+        -webkit-transform: rotate(-9deg);
+        -moz-transform: rotate(-9deg);
+        -ms-transform: rotate(-9deg);
+    }
+
+    .angle-10.neg {
+        transform: rotate(-10deg);
+        -webkit-transform: rotate(-10deg);
+        -moz-transform: rotate(-10deg);
+        -ms-transform: rotate(-10deg);
+    }
+
+/* -------------- Small Step Raises */
+
+    .raise-1 {
+        top: -0.1em;
+    }
+
+    .raise-2 {
+        top: -0.2em;
+    }
+
+    .raise-3 {
+        top: -0.3em;
+    }
+
+    .raise-4 {
+        top: -0.4em;
+    }
+
+    .raise-5 {
+        top: -0.5em;
+    }
+
+    .raise-6 {
+        top: -0.6em;
+    }
+
+    .raise-7 {
+        top: -0.7em;
+    }
+
+/* -------------- The Rest */
+
+    #navBar {
+        position: fixed;
+        z-index: 100;
+        top: 0;
+    }
+    nav.top-bar {
+    }
+
+    #titlePanel {
+        display: block;
+        overflow: hidden;
+        position: relative;
+        margin-top: -1em;
+    }
+
+        #fiveThousand {
+            /*color: #ddd;*/
+            color: rgba(0,0,0,0.05);
+            display: block;
+            font-size: 4em;
+            font-weight: bold;
+            left: 2em;
+            position: absolute;
+            z-index: 0;
+        }
+
+    [data-orbit] img {
+        width: 100%;
+    }
+
+    #voting-system-sidebar .label {
+        background: none repeat scroll 0 0 #DDDDDD;
+        border-radius: 3px;
+        color: #777777;
+        margin-left: 5px;
+    }
+
+    #viewContent {
+        margin-top: 1em;
+    }
