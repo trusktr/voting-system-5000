@@ -19,7 +19,7 @@ console.log('Setting up Pages controller.');
     PagesController.all = function() {
         console.log('### pages#all');
         commonAttributes = {
-            title: 'Voting System 5000',
+            title: '★✮☆ Voting System 5000',
             menu: [
                 {title:"Register to Vote", uri:"/register"},
                 {title:"Vote",             uri:"/vote"},
