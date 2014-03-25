@@ -1,8 +1,8 @@
 {>skeleton /}
 
-{<header}
-    {!Put all stuff for the header here.!}
-    {/header}
+{<header} {!Put all header stuff here.!}
+{/header}
+
 {<body}
 <form action="{common.req.url}" method="post">
   <div class="row">
@@ -72,4 +72,3 @@
         });
     </script>
 {/footer}
->>>>>>> 690f983be705d46c743aa68a127dc9e0313f57c9
