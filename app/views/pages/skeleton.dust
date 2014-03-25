@@ -48,8 +48,10 @@
                 </div>
             </div>
 
+            <div id="viewContent">
 <!--The main content for each view gets loaded here.-->
 {+body/}
+            </div>
 
             <footer class="row">
                 <div class="large-12 columns">

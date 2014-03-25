@@ -24,6 +24,7 @@ nav.top-bar {
     display: block;
     overflow: hidden;
     position: relative;
+    margin-top: -1em;
 }
 
 #fiveThousand {
@@ -49,4 +50,8 @@ nav.top-bar {
     border-radius: 3px;
     color: #777777;
     margin-left: 5px;
+}
+
+#viewContent {
+    margin-top: 1em;
 }
