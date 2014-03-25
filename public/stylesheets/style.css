@@ -35,6 +35,9 @@ nav.top-bar {
     position: absolute;
     top: -0.2em;
     transform: rotate(-10deg);
+    -webkit-transform: rotate(-10deg);
+    -moz-transform: rotate(-10deg);
+    -ms-transform: rotate(-10deg);
 }
 
 [data-orbit] img {
