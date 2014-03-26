@@ -5,7 +5,7 @@
  * TODO: Instead of having this function to specify property and value, just
  * overload Array.indexOf and let the user pass an object to matched against.
  */
-Array.prototype.indexOfObject = function(attr, value) {
+Array.prototype.indexOfObjectWith = function(attr, value) {
     for(var i = 0; i < this.length; i += 1) {
         if(this[i][attr] === value) {
             return i;
@@ -48,15 +48,15 @@ console.log('Setting up Pages controller.');
          * Allow the /admin menu item only for the logged in admin user.
          */
         if (!this.req.user || !(this.req.user && this.req.user.username == "admin")) { // if not logged in, or logged in but not admin
-            commonAttributes.menu.splice(commonAttributes.menu.indexOfObject("uri","/admin"), 1);
+            commonAttributes.menu.splice(commonAttributes.menu.indexOfObjectWith("uri","/admin"), 1);
         }
 
         /*
          * If logged in. Remove the /register and /login menu items
          */
         if (this.req.user) {
-            commonAttributes.menu.splice(commonAttributes.menu.indexOfObject("uri","/register"),1);
-            commonAttributes.menu.splice(commonAttributes.menu.indexOfObject("uri","/login"),1);
+            commonAttributes.menu.splice(commonAttributes.menu.indexOfObjectWith("uri","/register"),1);
+            commonAttributes.menu.splice(commonAttributes.menu.indexOfObjectWith("uri","/login"),1);
         }
 
         return this.next();
