@@ -9,7 +9,7 @@
                         <div class="large-12 columns"> <!-- most of these are going to be VARs -->
 
                             <!--Show nice buttons for all topics on big screen. Hide this on mobile views.-->
-                            <ul class="button-group radius vote-topic-yesno-buttons {^yesno}hide-for-small{/yesno}">
+                            <ul class="button-group radius vote-topic-selection-buttons {^yesno}hide-for-small{/yesno}">
                                 {#options}
                                     {>vote_option/}
                                 {/options}

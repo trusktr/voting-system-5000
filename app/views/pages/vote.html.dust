@@ -113,20 +113,7 @@
              * Handle the changing of values for the vote topics. This sends a
              * vote count update to the server.
              */
-            $("body").on("click", ".vote-topic-yesno-buttons .button", function(event) {
-
-                var _voteTopic = _button.closest(".voteTopic");
-                var _topicSpecifics = _voteTopic.find(".topic-specifics");
-                _topicSpecifics.addClass("hide");
-                switch(_button.attr("href")) {
-                    case "multiple":
-                        _topicSpecifics.filter(".multiple").removeClass("hide");
-                        break;
-                    case "yesno":
-                        _topicSpecifics.filter(".yesno").removeClass("hide");
-                        break;
-                    default:
-                }
+            $("body").on("click", ".vote-topic-selection-buttons .button", function(event) {
             });
         });
     </script>

@@ -26,8 +26,21 @@ console.log('Setting up Pages controller.');
                 {title:"Check Results",    uri:"/results"},
                 {title:"Manage Election",  uri:"/admin"}
             ],
-            req: this.req
+            req: this.req // do we want to expose the req properties to the template engine? Probably not. FIXME
         };
+
+        /*
+         *Allow the admin menu only for logged in admins.
+         */
+        if (!this.req.user || !(this.req.user && this.req.user.username == "admin")) { // if not logged in, or logged in but not admin
+            commonAttributes.menu.splice(3, 1);
+        }
+
+        /*If logged in.*/
+        if (this.req.user) {
+            commonAttributes.menu.splice(0,1);
+        }
+        
         return this.next();
     };
 
@@ -86,6 +99,8 @@ console.log('Setting up Pages controller.');
                 , state    : post.state
                 , zip      : post.zip
                 , email    : post.email
+                , username : post.username
+                , password : post.password
             });
             voter.save(function(err) {
                 if (err) {
@@ -157,6 +172,10 @@ console.log('Setting up Pages controller.');
     PagesController.admin = function() {
         var viewContext = this;
         viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
+        viewContext.user = this.req.user;
+        delete viewContext.user.password;
+        delete viewContext.user.ssn; // should we allow SSN to go to the front end?
+        delete viewContext.user.votes_hash; // And what about the vote hash?
 
         var async = require("async"); // control flow tool for calling multiple asynchronous functions.
 
