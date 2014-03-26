@@ -1,5 +1,18 @@
 
 
+/*
+ * TODO: put this in a utility module.
+ * TODO: Instead of having this function to specify property and value, just
+ * overload Array.indexOf and let the user pass an object to matched against.
+ */
+Array.prototype.indexOfObject = function(attr, value) {
+    for(var i = 0; i < this.length; i += 1) {
+        if(this[i][attr] === value) {
+            return i;
+        }
+    }
+}
+
 
 
 console.log('Setting up Pages controller.');
@@ -18,29 +31,34 @@ console.log('Setting up Pages controller.');
      */
     PagesController.all = function() {
         console.log('### pages#all');
+
         commonAttributes = {
             title: '★✮☆ Voting System 5000',
             menu: [
-                {title:"Register to Vote", uri:"/register"},
+                {title:"Register",         uri:"/register"},
+                {title:"Login",            uri:"/login"},
                 {title:"Vote",             uri:"/vote"},
-                {title:"Check Results",    uri:"/results"},
+                {title:"View Results",     uri:"/results"},
                 {title:"Manage Election",  uri:"/admin"}
             ],
-            req: this.req // do we want to expose the req properties to the template engine? Probably not. FIXME
+            req: this.req // FIXME: We do not want to expose the whole request object to the front end.
         };
 
         /*
-         *Allow the admin menu only for logged in admins.
+         * Allow the /admin menu item only for the logged in admin user.
          */
         if (!this.req.user || !(this.req.user && this.req.user.username == "admin")) { // if not logged in, or logged in but not admin
-            commonAttributes.menu.splice(3, 1);
+            commonAttributes.menu.splice(commonAttributes.menu.indexOfObject("uri","/admin"), 1);
         }
 
-        /*If logged in.*/
+        /*
+         * If logged in. Remove the /register and /login menu items
+         */
         if (this.req.user) {
-            commonAttributes.menu.splice(0,1);
+            commonAttributes.menu.splice(commonAttributes.menu.indexOfObject("uri","/register"),1);
+            commonAttributes.menu.splice(commonAttributes.menu.indexOfObject("uri","/login"),1);
         }
-        
+
         return this.next();
     };
 
