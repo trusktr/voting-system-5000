@@ -65,6 +65,20 @@
   </div>
   <div class="row">
     <div class="large-12 columns">
+      <label>Username
+        <input name="username" type="text" placeholder="noun" />
+      </label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-12 columns">
+      <label>Password
+        <input name="password" type="password" placeholder="***********" />
+      </label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="large-12 columns">
         <button class="button radius">Submit</button>
     </div>
   </div>
