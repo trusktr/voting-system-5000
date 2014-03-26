@@ -11,6 +11,48 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+        <div class="large-8 columns">
+        <form>
+             <fieldset>
+                  <legend>President</legend>
+                  <label>Jone Doe (%)</label>
+                       <div class="progress large-8 success round">
+                       <span class="meter" style="width: 60%"></span>
+                       </div>
+                  <label>Hilary Clinton (%)</label>
+                       <div class="progress large-8 alert round">
+                       <span class="meter" style="width:40%"></span>
+                       </div>
+                  <label>Other (%)</label>
+                       <div class="progress large-8 round">
+                       <span class="meter" style="width: 5%"></span>
+                       </div>
+             </fieldset>
+        </form>
+        </div>
+        </div>
+        <div class="row">
+        <div class="large-8 columns">
+        <form>
+             <fieldset>
+                  <legend>Propositions</legend>
+                  <label>Proposition A (%)</label>
+                       <div class="progress large-8 alert round">
+                       <span class="meter" style="width: 30%"></span>
+                       </div>
+                  <label>Proposition B (%)</label>
+                       <div class="progress large-8 success round">
+                       <span class="meter" style="width: 85%"></span>
+                       </div>
+                  <label>Proposition C (%)</label>
+                       <div class="progress large-8 secondary round">
+                       <span class="meter" style="width: 5%"></span>
+                       </div>
+             </fieldset>
+        </form>
+        </div>
+        </div>
 {/body}
 
 {<foobar} {!Put all scripts here.!}
