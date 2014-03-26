@@ -1,7 +1,6 @@
 {>skeleton /}
 
-{<header}
-    {!Put all stuff for the header here.!}
+{<header} {!Put all stuff for the header here.!}
 {/header}
 
 {<body}
@@ -18,8 +17,8 @@
  {!This page is loaded after a registered voter has authenticated with the system and would like to vote!}
 
  <!-- Nav Sidebar -->
-
     <!-- This is source ordered to be pulled to the left on larger screens -->
+    <!--
     <div class="large-3 columns ">
       <div class="panel">
         <a href="#"><img src="http://placehold.it/300x240&text=[img]" /></a>
@@ -44,34 +43,21 @@
             <h5 class="title"><a href="#">Proposition 47: Replace public tap water with coffee</a></h5>
           </section>
         </div>
-
       </div>
     </div>
+    -->
 
     <!-- Main List -->
     <!-- This has been source ordered to come first in the markup (and on small devices) but to be to the right of the nav on larger screens -->
-    <div class="large-9 columns">
+    <!--<div class="large-9 columns">-->
+    <div class="large-12 columns">
 
-	{#topics}
-        <!-- Feed Entry --><!-- This to be data pulled from db -->
-        <div class="row">
-            <div class="large-2 columns small-3"><img src="http://placehold.it/80x80&text=[img]" /></div>
-            <div class="large-10 columns">
-                <p><strong>VAR: Title of Race and/or Proposition</strong></p>
-
-                <h6>Please make your selection below</h6>
-                <div class="row">
-                    <div class="large-10 columns"> <!-- most of these are going to be VARs -->
-                        <input type="radio" name="race1" value="option1" id="option1"><label for="option1">option1</label>
-                        <input type="radio" name="race1" value="option2" id="option2"><label for="option2">option2</label>
-                        <input type="radio" name="race1" value="option3" id="option3"><label for="option3">option3</label>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- End Feed Entry -->
-	{/topics}
-      <hr />
+        {#voteTopics} {! For each vote topic. !}
+            {>vote_topic/} {! Use the vote_topic.dust template. !}
+        {/voteTopics}
+        {^voteTopics} {! If we don't have vote topics. !}
+            {>vote_topic/} {! Use the vote_topic.dust template. !}
+        {/voteTopics}
 
     </div>
 
@@ -81,6 +67,67 @@
 
 {<footer}
     <script>
-        // put all JavaScript here.
+
+        /*
+         * Builds the data model containing the user's vote for each topic.
+         */
+        function constructDataModel() {
+            var dataModel = { voteTopics: [] };
+
+            $(".voteTopic:not(.sample)").each(function() {
+                var _voteTopic = $(this);
+                var topic = {};
+
+                topic.name = _voteTopic.find("input[name=topicName]").val();
+                topic.options = [];
+                if (_voteTopic.find(".vote-topic-type-buttons a:not(.secondary)").is("[href=multiple]")) {
+                    _voteTopic.find(".topic-specifics.multiple input").each(function() {
+                        var option = $(this).val();
+                        topic.options.push(option);
+                    });
+                }
+                else if (_voteTopic.find(".vote-topic-type-buttons a:not(.secondary)").is("[href=yesno]")) {
+                    topic.options = ["Yes","No"];
+                }
+                dataModel.voteTopics.push(topic);
+            });
+            return dataModel;
+        }
+
+        $(document).ready(function() {
+
+            /*
+             * Handle the buttons to select each topic's type.
+             * TODO: Consolidate some of this code with duplicate code in
+             * admin.html.dust.
+             */
+            $("body").on("click", ".button-group .button", function(event) {
+                var _button = $(this);
+                var _buttonGroup = _button.closest(".button-group");
+                _buttonGroup.find(".button").addClass("secondary");
+                _button.removeClass("secondary");
+                event.preventDefault();
+            });
+
+            /*
+             * Handle the changing of values for the vote topics. This sends a
+             * vote count update to the server.
+             */
+            $("body").on("click", ".vote-topic-yesno-buttons .button", function(event) {
+
+                var _voteTopic = _button.closest(".voteTopic");
+                var _topicSpecifics = _voteTopic.find(".topic-specifics");
+                _topicSpecifics.addClass("hide");
+                switch(_button.attr("href")) {
+                    case "multiple":
+                        _topicSpecifics.filter(".multiple").removeClass("hide");
+                        break;
+                    case "yesno":
+                        _topicSpecifics.filter(".yesno").removeClass("hide");
+                        break;
+                    default:
+                }
+            });
+        });
     </script>
 {/footer}

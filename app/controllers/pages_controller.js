@@ -113,21 +113,36 @@ console.log('Setting up Pages controller.');
         viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
 
         var VoteTopic = require("../models/vote_topic.js");
-        VoteTopic.getAll(function(topics) {
-            viewContext.topics = topics; // give it to the view.
 
-            if (Object.keys(this.req.body).length > 0) { // if we have POST variables.
-                // Save the user's vote.
+        if (Object.keys(this.req.body).length > 0) { // if we have POST variables.
+
+            console.log(" -- Getting vote topics for vote page.");
+            VoteTopic.getAll(function(err, topics) {
+                //TODO: make an array of errors. Make each template handle the array in skeleton.dust.
+                if (saveError) {
+                    viewContext.modalError = true;
+                    viewContext.modalMessage = "Could not save vote topics.";
+                }
+                if (err) {
+                    viewContext.modalError = true;
+                    viewContext.modalMessage = "Could not get vote topics.";
+                }
+                viewContext.modalMessage = "All changes saved!";
+                viewContext.voteTopics = topics;
                 viewContext.render();
-            }
-            else if (Object.keys(this.req.query).length > 0) { // if we have GET variables.
-                // nothing for GET.
+            });
+        }
+        else { // if no POST (we don't care about GET for this page).
+            // Vote.find(function(err, topics) {
+            VoteTopic.getAll(function(err, topics) {
+                if (err) {
+                    viewContext.error = true;
+                    viewContext.message = "Error: Could not get vote topics.";
+                }
+                viewContext.voteTopics = topics;
                 viewContext.render();
-            }
-            else { // if no GET or POST
-                viewContext.render();
-            }
-        });
+            });
+        }
     };
 
     PagesController.results = function() {
@@ -169,10 +184,14 @@ console.log('Setting up Pages controller.');
                     // all changes to the election configuration have been saved (if no saveError).
                     VoteTopic.getAll(function(err, topics) {
                         //TODO: make an array of errors. Make each template handle the array in skeleton.dust.
-                        if (saveError) { viewContext.modalError = true;
-                            viewContext.modalMessage = "Could not save vote topics."; }
-                        if (err) { viewContext.modalError = true;
-                            viewContext.modalMessage = "Could not get vote topics."; }
+                        if (saveError) {
+                            viewContext.modalError = true;
+                            viewContext.modalMessage = "Could not save vote topics.";
+                        }
+                        if (err) {
+                            viewContext.modalError = true;
+                            viewContext.modalMessage = "Could not get vote topics.";
+                        }
                         viewContext.modalMessage = "All changes saved!";
                         viewContext.voteTopics = topics;
                         viewContext.render();
@@ -183,8 +202,10 @@ console.log('Setting up Pages controller.');
         else { // if no POST (we don't care about GET for this page).
             //Vote.find(function(err, topics) {
             VoteTopic.getAll(function(err, topics) {
-                if (err) { viewContext.error = true;
-                    viewContext.message = "Error: Could not get vote topics."; }
+                if (err) {
+                    viewContext.error = true;
+                    viewContext.message = "Error: Could not get vote topics.";
+                }
                 viewContext.voteTopics = topics;
                 viewContext.render();
             });

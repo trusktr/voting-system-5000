@@ -1,0 +1,7 @@
+
+
+{^select}
+    <li><a href="{options[$idx]}" class="button tiny secondary">{options[$idx]}</a></li>
+{:else}
+    <option value="{options[$idx]}">{options[$idx]}</option>
+{/select}

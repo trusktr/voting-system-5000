@@ -1,0 +1,12 @@
+                                <div class="row collapse topicChoice">
+                                    <div class="small-3 large-1 columns">
+                                      <span class="prefix">Choice:</span>
+                                    </div>
+                                    <div class="small-8 large-10 columns">
+                                        <input type="text" value="{options[$idx]}" placeholder="Political McCandidateson">
+                                    </div>
+                                    <div class="small-1 large-1 columns">
+                                      <a href="#" class="button alert radius postfix delete_choice_button hide-for-small">Delete Choice</a>
+                                      <a href="#" class="button alert radius postfix delete_choice_button show-for-small"><b>&times;</b></a>
+                                    </div>
+                                </div>

@@ -18,13 +18,11 @@
 <div id="voteTopics">
 
 
-    {?voteTopics} {! If we have vote topics. !}
-        {#voteTopics} {! For each vote topic. !}
-            {>vote_topic/} {! Use the vote_topic.dust template. !}
-        {/voteTopics}
+    {#voteTopics} {! For each vote topic. !}
+        {>admin_vote_topic/} {! Use the vote_topic.dust template. !}
     {/voteTopics}
     {^voteTopics} {! If we don't have vote topics. !}
-        {>vote_topic/} {! Use the vote_topic.dust template. !}
+        {>admin_vote_topic/} {! Use the vote_topic.dust template. !}
     {/voteTopics}
 
 </div><!-- #voteTopics -->
@@ -60,10 +58,37 @@
 
 {<footer} {!Put all scripts here.!}
     <script>
+
+        /*
+         *Builds he VoteTopic data model to send back to the server for saving.
+         */
+        function constructDataModel() {
+            var dataModel = { voteTopics: [] };
+
+            $(".voteTopic:not(.sample)").each(function() {
+                var _voteTopic = $(this);
+                var topic = {};
+
+                topic.name = _voteTopic.find("input[name=topicName]").val();
+                topic.options = [];
+                if (_voteTopic.find(".vote-topic-type-buttons a:not(.secondary)").is("[href=multiple]")) {
+                    _voteTopic.find(".topic-specifics.multiple input").each(function() {
+                        var option = $(this).val();
+                        topic.options.push(option);
+                    });
+                }
+                else if (_voteTopic.find(".vote-topic-type-buttons a:not(.secondary)").is("[href=yesno]")) {
+                    topic.options = ["Yes","No"];
+                }
+                dataModel.voteTopics.push(topic);
+            });
+            return dataModel;
+        }
+
         $(document).ready(function() {
 
             /*
-             * Generate sample elements from which to clone duplicates when the "+Add" buttons are pressed.
+             * Generate the sample elements from which to clone duplicates when the "+Add" buttons are pressed.
              */
             var _sampleVoteTopic = $(".voteTopic").first().clone();
             _sampleVoteTopic.appendTo("body").addClass("sample hide");
@@ -145,30 +170,6 @@
                     }
                 });
             });
-
-            function constructDataModel() {
-                var dataModel = { voteTopics: [] };
-
-                $(".voteTopic:not(.sample)").each(function() {
-                    var _voteTopic = $(this);
-                    var topic = {};
-
-                    topic.name = _voteTopic.find("input[name=topicName]").val();
-                    topic.options = [];
-                    if (_voteTopic.find(".vote-topic-type-buttons a:not(.secondary)").is("[href=multiple]")) {
-                        _voteTopic.find(".topic-specifics.multiple input").each(function() {
-                            var option = $(this).val();
-                            topic.options.push(option);
-                        });
-                    }
-                    else if (_voteTopic.find(".vote-topic-type-buttons a:not(.secondary)").is("[href=yesno]")) {
-                        topic.options = ["Yes","No"];
-                    }
-                    dataModel.voteTopics.push(topic);
-                });
-                console.log(dataModel);
-                return dataModel;
-            }
 
             /*
              *Handle the delete topic button

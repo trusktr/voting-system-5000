@@ -1,67 +1,34 @@
-            <div class="row voteTopic">
-            <div class="large-12 columns">
-            <form>
-              <fieldset class="radius">
-                <legend><h4>Vote Topic</h4></legend>
-                    <label>Topic Name</label>
-                    <div class="row collapse">
-                        <div class="small-10 columns">
-                          <input type="text" value="{name}" name="topicName" placeholder="e.g. Vice President or Proposition 5000">
-                        </div>
-                        <div class="small-2 columns">
-                          <a href="#" class="button alert radius postfix delete_vote_topic_button">Delete Topic</a>
-                        </div>
-                    </div>
-                    <label>Topic Type
-                        <ul class="button-group radius vote-topic-type-buttons">
-                          <li><a href="multiple" class="button tiny {?yesno}secondary{/yesno}">Multiple Choice</a></li>
-                          <li><a href="yesno" class="button tiny {^yesno}secondary{/yesno}">Yes/No</a></li>
-                        </ul>
-                    </label>
-                    <label class="hide">Topic Description
-                      <textarea type="text" name="topicDescription" placeholder="Description of the topic.">
-                          {description}
-                      </textarea>
-                    </label>
 
-                    <div class="{^yesno}hide{/yesno} topic-specifics yesno">
-                    </div>
-                    <div class="{?yesno}hide{/yesno} topic-specifics multiple">
-                        <label>Choices</label>
-                        <div class="choices">
-                            {#options}
-                                <div class="row collapse topicChoice">
-                                    <div class="small-3 large-1 columns">
-                                      <span class="prefix">Choice:</span>
-                                    </div>
-                                    <div class="small-8 large-10 columns">
-                                        <input type="text" value="{options[$idx]}" placeholder="Political McCandidateson">
-                                    </div>
-                                    <div class="small-1 large-1 columns">
-                                      <a href="#" class="button alert radius postfix delete_choice_button">Delete Choice</a>
-                                    </div>
-                                </div>
-                            {/options}
-                            {^options}
-                                <div class="row collapse topicChoice">
-                                    <div class="small-3 large-1 columns">
-                                      <span class="prefix">Choice:</span>
-                                    </div>
-                                    <div class="small-8 large-10 columns">
-                                        <input type="text" value="{options[$idx]}" placeholder="Political McCandidateson">
-                                    </div>
-                                    <div class="small-1 large-1 columns">
-                                      <a href="#" class="button alert radius postfix delete_choice_button">Delete Choice</a>
-                                    </div>
-                                </div>
-                            {/options}
-                        </div>
-                        <ul class="button-group radius vote-topic-add-option">
-                          <li><a href="multiple" class="button tiny secondary">+ Add Choice</a></li>
-                        </ul>
-                    </div>
+            <!-- Feed Entry --><!-- This to be data pulled from db -->
+            <div class="row">
+                <!--<div class="large-2 columns small-3"><img src="http://placehold.it/80x80&text=[{name}]" /></div>-->
+                <!--<div class="large-10 columns">-->
+                <div class="large-12 columns">
+                    <p><strong>{name}</strong></p>
+                    <div class="row">
+                        <div class="large-12 columns"> <!-- most of these are going to be VARs -->
 
-              </fieldset>
-            </form>
+                            <!--Show nice buttons for all topics on big screen. Hide this on mobile views.-->
+                            <ul class="button-group radius vote-topic-yesno-buttons {^yesno}hide-for-small{/yesno}">
+                                {#options}
+                                    {>vote_option/}
+                                {/options}
+                            </ul>
+
+                            <!--If not a yes/no topic, show this for mobile views.-->
+                            {^yesno}
+                            <form class="show-for-small">
+                                <select>
+                                    {#options}
+                                        {>vote_option select="true"/}
+                                    {/options}
+                                </select>
+                            </form>
+                            {/yesno}
+
+                        </div>
+                    </div>
+                </div>
             </div>
-            </div><!-- .voteTopic -->
+            <!-- End Feed Entry -->
+      <hr />
