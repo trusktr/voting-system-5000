@@ -27,33 +27,23 @@ module.exports = mongoose.model('Voter', VoterSchema);
 // hard code an admin account.
 var Voter = module.exports;
 Voter.findOne({username: "admin"}, function(err, admin) {
+    var adminDetails = {
+        ssn          : 000000000
+        , name       : "Boss Man"
+        , street     : "3456 Boss Way"
+        , city       : "Tyrannis"
+        , state      : "FU"
+        , zip        : 00001
+        , email      : "boss@yourefired.com"
+        , username   : "admin"
+        , password   : "admin"
+        , voted      : true
+    };
     if (admin) {
-        admin.update({
-            ssn          : 000000000
-            , name       : "Boss Man"
-            , street     : "3456 Boss Way"
-            , city       : "Tyrannis"
-            , state      : "FU"
-            , zip        : 00001
-            , email      : "boss@yourefired.com"
-            , username   : "admin"
-            , password   : "admin"
-            , voted      : true
-        }, function() { });
+        admin.update(adminDetails, function() { });
     }
     else {
-        admin = new Voter({
-            ssn          : 000000000
-            , name       : "Boss Man"
-            , street     : "3456 Boss Way"
-            , city       : "Tyrannis"
-            , state      : "FU"
-            , zip        : 00001
-            , email      : "boss@yourefired.com"
-            , username   : "admin"
-            , password   : "admin"
-            , voted      : true
-        });
+        admin = new Voter(adminDetails);
         admin.save();
     }
 });
