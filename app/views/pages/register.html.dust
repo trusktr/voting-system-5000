@@ -13,7 +13,7 @@
             </div>
         </div>
 
-<form id="register-form" action="{common.req.url}" method="post" data-abide="ajax">
+<form id="register-form" action="{common.thisPage}" method="post" data-abide="ajax">
   <div class="row">
     <div class="large-12 columns">
       <label>Your Name
@@ -115,6 +115,8 @@
     <script>
         $(document).ready(function() {
             var registrationSuccessful = false;
+
+            //TODO: We need a function to enforce strong, secure passwords.
 
             /*
              * Ajax-ify the form submission

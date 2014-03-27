@@ -12,9 +12,6 @@ console.log('Setting up Pages controller.');
     var locomotive = require('locomotive'),
         PagesController = new locomotive.Controller();
 
-//--------------- Attributes for all views stored here.
-    var commonAttributes;
-
 
 //--------------- Helper functions.
 
@@ -40,7 +37,7 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
     PagesController.all = function() {
         console.log('### pages#all');
 
-        commonAttributes = {
+        this.req.commonAttributes = {
             title: '★✮☆ Voting System 5000',
             menu: [
                 {title:"Register",         uri:"/register"},
@@ -49,22 +46,24 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
                 {title:"View Results",     uri:"/results"},
                 {title:"Manage Election",  uri:"/admin"}
             ],
-            req: this.req // FIXME: We do not want to expose the whole request object to the front end.
+            thisPage: this.req.url // FIXME: We do not want to expose the whole request object to the front end.
         };
+
+        var menu = this.req.commonAttributes.menu;
 
         /*
          * Allow the /admin menu item only for the logged in admin user.
          */
         if (!this.req.user || !(this.req.user && this.req.user.username == "admin")) { // if not logged in, or logged in but not admin
-            commonAttributes.menu.splice(commonAttributes.menu.indexOfObjectWith("uri","/admin"), 1);
+            menu.splice(menu.indexOfObjectWith("uri","/admin"), 1);
         }
 
         /*
          * If logged in. Remove the /register and /login menu items
          */
         if (this.req.user) {
-            commonAttributes.menu.splice(commonAttributes.menu.indexOfObjectWith("uri","/register"),1);
-            commonAttributes.menu.splice(commonAttributes.menu.indexOfObjectWith("uri","/login"),1);
+            menu.splice(menu.indexOfObjectWith("uri","/register"),1);
+            menu.splice(menu.indexOfObjectWith("uri","/login"),1);
         }
 
         return this.next();
@@ -74,10 +73,8 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
      * The root page of the app.
      */
     PagesController.root = function() {
-        console.log('### pages#root');
-
         var viewContext = this;
-        viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
+        viewContext.common = this.req.commonAttributes; // Always have this line in each controller method, at the top. There's probably a better way to do it...
 
         /*
          * Example usage of a model:
@@ -110,7 +107,7 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
 
     PagesController.register = function() {
         var viewContext = this;
-        viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
+        viewContext.common = this.req.commonAttributes; // Always have this line in each controller method, at the top. There's probably a better way to do it...
 
         var Voter = require("../models/voter.js");
 
@@ -139,7 +136,7 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
 
     PagesController.vote = function() {
         var viewContext = this;
-        viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
+        viewContext.common = this.req.commonAttributes; // Always have this line in each controller method, at the top. There's probably a better way to do it...
 
         var VoteTopic = require("../models/vote_topic.js");
 
@@ -179,7 +176,7 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
      */
     PagesController.results = function() {
         var viewContext = this;
-        viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
+        viewContext.common = this.req.commonAttributes; // Always have this line in each controller method, at the top. There's probably a better way to do it...
         viewContext.render();
     };
 
@@ -188,7 +185,7 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
      */
     PagesController.admin = function() {
         var viewContext = this;
-        viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
+        viewContext.common = this.req.commonAttributes; // Always have this line in each controller method, at the top. There's probably a better way to do it...
         viewContext.user = this.req.user;
         delete viewContext.user.password;
         delete viewContext.user.ssn; // should we allow SSN to go to the front end?
