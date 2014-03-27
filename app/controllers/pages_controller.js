@@ -32,8 +32,6 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
 }
 
 
-
-
 //--------------- Set up the methods that we've specified in the routes.js config file.
 
     /*
@@ -96,7 +94,8 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
                 console.log("Found?");
                 voters.forEach(function(voter) {
                     console.log(" ########### Voter's name: "+voter.name);
-                    // We'll see output in the console when we have voters.
+                    // We'll see users outputted to console whenever the main
+                    // page is accessed.
                 });
             });
 
@@ -106,10 +105,7 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
 
         viewContext.render();
 
-        // This is the beauty of JavaScript.
-
-        // NOTE: To execute things in order, see the next two example
-        // PagesController functions/methods.
+        // This is the beauty (and hideousness) of JavaScript.
     };
 
     PagesController.register = function() {
@@ -188,6 +184,9 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
         }
     };
 
+    /*
+     * Handles the /results page.
+     */
     PagesController.results = function() {
         var viewContext = this;
         viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
@@ -259,52 +258,8 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
         }
     };
 
-
-    /*
-     * An example to show how to execute things in order. This function
-     * doesn't get called.
-     */
-    PagesController.example = function() {
-
-            var viewContext = this;
-            viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
-
-            var Voter = require("../models/voter.js");
-            var v = new Voter(); // instantiate a new voter.
-
-            v.name = "Ray Ban"; // set the voter's name.
-            v.save(function(error) { // save the voter to the database.
-                console.log("\n -- Error saving voter: \n"+error+"\n");
-
-                Voter.find( {/* empty search criteria */}, function(err, voters) {
-                    if (err) {
-                        console.log(err)
-                    }
-                    else {
-                        viewContext.voters = []; // an array of voters for use in the view.
-                        voters.forEach(function(voter) {
-                            console.log(" Voter's name: "+voter.name);
-
-                            // Add the user to the array.
-                            viewContext.voters.push(voter);
-                        });
-                    }
-
-                    viewContext.render();
-                    // Now the page gets rendered after we've attempted to
-                    // save an invalid voter, followed by having retrieved
-                    // all voters.
-                });
-            });
-    };
-
-//-- Each controller needs a line like the following.
+//-------------- Each controller needs a line like the following.
     module.exports = PagesController;
 
 console.log('Done setting up Pages controller.');
-
-
-
-
-
 
