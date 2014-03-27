@@ -114,9 +114,6 @@
 {<footer}
     <script>
         $(document).ready(function() {
-            {?modalMessage}
-                $(document).foundation('joyride', 'start');
-            {/modalMessage}
         });
     </script>
 {/footer}

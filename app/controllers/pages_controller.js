@@ -1,4 +1,22 @@
+/*
+ * This is the pages controller. This controller has methods that are in charge
+ * of generating the content for pages on the site.
+ *
+ * NOTE: Never allow the variable modalMessage to be set from input received
+ * from the front end, to avoid Cross-site scripting attacks.
+ */
 
+console.log('Setting up Pages controller.');
+
+//--------------- Each controller needs be initialized as a locomotive controller.
+    var locomotive = require('locomotive'),
+        PagesController = new locomotive.Controller();
+
+//--------------- Attributes for all views stored here.
+    var commonAttributes;
+
+
+//--------------- Helper functions.
 
 /*
  * TODO: put this in a utility module.
@@ -15,16 +33,8 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
 
 
 
-console.log('Setting up Pages controller.');
 
-//-- Each controller needs be initialized as a locomotive controller.
-    var locomotive = require('locomotive'),
-        PagesController = new locomotive.Controller();
-
-//-- Attributes for all views stored here.
-    var commonAttributes;
-
-//-- Set up the methods that we've specified in the routes.js config file.
+//--------------- Set up the methods that we've specified in the routes.js config file.
 
     /*
      * Does stuff for all pages.
@@ -124,10 +134,10 @@ console.log('Setting up Pages controller.');
                 if (err) {
                     console.log(err);
                     viewContext.error = true;
-                    viewContext.message = "You may have already registered.";
+                    viewContext.modalMessage = "You may have already registered. <a href='/vote'>Place your vote.</a>";
                 }
                 else {
-                    viewContext.message = "Thanks for registering, "+voter.name+"! <a href='/vote'>Place your vote.</a>";
+                    viewContext.modalMessage = "Thanks for registering, "+voter.name+"! <a href='/vote'>Place your vote.</a>";
                     viewContext.voter = voter;
                 }
                 viewContext.render();

@@ -77,7 +77,7 @@
           <li data-id="" data-text="OK" data-options="tip_location: top">
             <p class="modalMessage" id="{?modalMessage}modalMessage{/modalMessage}">
                 {?modalError}Error: {/modalError}
-                {?modalMessage}{modalMessage}{/modalMessage}
+                {?modalMessage}{modalMessage|s}{/modalMessage}
             </p>
           </li>
         </ol>
