@@ -40,30 +40,42 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
         this.req.commonAttributes = {
             title: '★✮☆ Voting System 5000',
             menu: [
-                {title:"Register",         uri:"/register"},
-                {title:"Login",            uri:"/login"},
                 {title:"Vote",             uri:"/vote"},
                 {title:"View Results",     uri:"/results"},
-                {title:"Manage Election",  uri:"/admin"}
+                {title:"Register",         uri:"/register"},
+                {title:"Login",            uri:"/login"},
+                {title:"Manage Election",  uri:"/admin"},
+                {title:"Logout",           uri:"/logout"}
             ],
-            thisPage: this.req.url // FIXME: We do not want to expose the whole request object to the front end.
+            thisPage: this.req.url
         };
 
         var menu = this.req.commonAttributes.menu;
 
         /*
-         * Allow the /admin menu item only for the logged in admin user.
+         * Allow the /admin menu item only for the logged-in admin user.
          */
         if (!this.req.user || !(this.req.user && this.req.user.username == "admin")) { // if not logged in, or logged in but not admin
             menu.splice(menu.indexOfObjectWith("uri","/admin"), 1);
         }
 
         /*
-         * If logged in. Remove the /register and /login menu items
+         * If logged in as admin remove the /vote menu item.
+         */
+        if (this.req.user && this.req.user.username == "admin") {
+            menu.splice(menu.indexOfObjectWith("uri","/vote"), 1);
+        }
+
+        /*
+         * If logged in. Remove the /register and /login menu items. Add the
+         * /logout item.
          */
         if (this.req.user) {
             menu.splice(menu.indexOfObjectWith("uri","/register"),1);
             menu.splice(menu.indexOfObjectWith("uri","/login"),1);
+        }
+        else {
+            menu.splice(menu.indexOfObjectWith("uri","/logout"),1);
         }
 
         return this.next();
