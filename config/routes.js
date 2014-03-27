@@ -23,7 +23,16 @@ function lock(req, res, done) {
  */
 function isAdmin(req, res, done) {
 	console.log('### Checking user admin status.');
-	if (req.user.username === "admin") { return done(); }
+	if (req.user.username == "admin") { return done(); }
+        else {res.redirect('/'); return;}
+}
+
+/*
+ * Used to prevent access to a page unless user is admin.
+ */
+function isNotAdmin(req, res, done) {
+	console.log('### Checking user is not admin.');
+	if (req.user.username != "admin") { return done(); }
         else {res.redirect('/'); return;}
 }
 
@@ -36,7 +45,7 @@ module.exports = function routes() {
 	//this.match(/^((?!^\/login$).)*$/, [lock]);
 	this.match('/', 'pages#root');
         this.match('/register', 'pages#register', {via: ['get','post']});
-        this.match('/vote', [lock]);
+        this.match('/vote', [lock, isNotAdmin]);
         this.match('/vote', 'pages#vote');
         this.match('/results', 'pages#results');
         this.match('/admin', [lock, isAdmin]);
