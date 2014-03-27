@@ -146,7 +146,7 @@
              */
             $("body").on("click", ".joyride-next-tip, .joyride-modal-bg, .joyride-close-tip", function() {
                 if (registrationSuccessful) {
-                    document.location = "/vote";
+                    document.location = "/";
                 }
             });
         });
