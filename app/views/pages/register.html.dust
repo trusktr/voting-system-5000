@@ -33,7 +33,7 @@
   <div class="row">
     <div class="large-12 columns">
       <label>Confirm Social Security Number
-        <input name="ssnconfirm" type="password" data-equalto="ssn" required placeholder="*** - ** - ***" />
+        <input type="password" data-equalto="ssn" required placeholder="*** - ** - ***" />
       </label>
       <small class="error">This field doesn't match the previous field.</small>
     </div>
@@ -97,7 +97,7 @@
   <div class="row">
     <div class="large-12 columns">
       <label>Confirm Password
-        <input name="passwordconfirm" type="password" data-equalto="password" required placeholder="***********" />
+        <input type="password" data-equalto="password" required placeholder="***********" />
       </label>
       <small class="error">Passwords don't match.</small>
     </div>

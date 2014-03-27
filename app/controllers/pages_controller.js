@@ -112,20 +112,10 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
         var viewContext = this;
         viewContext.common = commonAttributes; // Always have this line in each controller, at the top. There's probably a better way to do it...
 
+        var Voter = require("../models/voter.js");
+
         if (Object.keys(this.req.body).length > 0) { // if we have POST variables.
-            var post = this.req.body;
-            var Voter = require("../models/voter.js");
-            var voter = new Voter({
-                  ssn      : post.ssn
-                , name     : post.name
-                , street   : post.street
-                , city     : post.city
-                , state    : post.state
-                , zip      : post.zip
-                , email    : post.email
-                , username : post.username
-                , password : post.password
-            });
+            var voter = new Voter(this.req.body);
             voter.save(function(err) {
                 if (err) {
                     console.log(err);
