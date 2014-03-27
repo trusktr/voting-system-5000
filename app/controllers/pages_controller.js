@@ -115,11 +115,11 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
         var Voter = require("../models/voter.js");
 
         if (Object.keys(this.req.body).length > 0) { // if we have POST variables.
-            var voter = new Voter(this.req.body);
+            var voter = new Voter(this.req.body); // TODO: We need server-side validation here.
             voter.save(function(err) {
                 if (err) {
                     console.log(err);
-                    viewContext.error = true;
+                    viewContext.modalError = true;
                     viewContext.modalMessage = "You may have already registered. <a href='/vote'>Place your vote.</a>";
                 }
                 else {

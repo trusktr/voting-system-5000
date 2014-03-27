@@ -13,7 +13,7 @@
             </div>
         </div>
 
-<form action="{common.req.url}" method="post" data-abide>
+<form id="register-form" action="{common.req.url}" method="post" data-abide="ajax">
   <div class="row">
     <div class="large-12 columns">
       <label>Your Name
@@ -114,6 +114,41 @@
 {<footer}
     <script>
         $(document).ready(function() {
+            var registrationSuccessful = false;
+
+            /*
+             * Ajax-ify the form submission
+             */
+            $("#register-form").on("submit", function(event) {
+                var postData = $(this).serialize();
+                $.post("/register", postData, function(data) {
+                    var _doc = $(data);
+                    if (~_doc.find("#modalMessage").text().indexOf("Error")) {
+                        registrationSuccessful = false;
+                    }
+                    else {
+                        registrationSuccessful = true;
+                    }
+                    /*our backend sends back HTML pages for now, no JSON.*/
+                    var _thisBody = $("body");
+                    $(".modalMessage").html(_doc.find("#modalMessage").html());
+                    if ($(".joyride-tip-guide").length > 0) {
+                        $(document).foundation('joyride', 'stop');
+                    }
+                    $(document).foundation('joyride', 'start');
+                });
+                event.preventDefault();
+            });
+
+            /*
+             * After successful registration, forward the user to the vote page
+             * when the user dismisses the success message.
+             */
+            $("body").on("click", ".joyride-next-tip, .joyride-modal-bg, .joyride-close-tip", function() {
+                if (registrationSuccessful) {
+                    document.location = "/vote";
+                }
+            });
         });
     </script>
 {/footer}
