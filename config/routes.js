@@ -8,13 +8,24 @@
 
 console.log('Setting up routes.');
 
-function lock(req, res, next) {
+/*
+ * Used to prevent access to a page unless the user is logged in.
+ */
+function lock(req, res, done) {
 	console.log('### Checking user authentication status.');
-	if (req.isAuthenticated()) { return next(); }
+        global.urlAttempted = req.url;
+	if (req.isAuthenticated()) { return done(); }
         else {res.redirect('/login'); return;}
 }
 
-//var PagesController = new (require('../app/contollers/pages_controller.js'));
+/*
+ * Used to prevent access to a page unless user is admin.
+ */
+function isAdmin(req, res, done) {
+	console.log('### Checking user admin status.');
+	if (req.user.username === "admin") { return done(); }
+        else {res.redirect('/'); return;}
+}
 
 //ROUTES
 module.exports = function routes() {
@@ -28,11 +39,9 @@ module.exports = function routes() {
         this.match('/vote', [lock]);
         this.match('/vote', 'pages#vote');
         this.match('/results', 'pages#results');
-        this.match('/admin', [lock]);
+        this.match('/admin', [lock, isAdmin]);
         this.match('/admin', 'pages#admin', {via: ['get', 'post']});
 
-        // Don't worry about log in stuff yet. Technically we can do that in the
-        // second assignment.
 	this.match('/login', 'account#login', {via: 'get'}); // login form.
 	this.match('/login', 'account#authenticate', {via: 'post'}); // submission of the login form.
 	this.match('/logout', 'account#logout', {via: 'get'}); // logs out the user.

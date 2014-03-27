@@ -9,21 +9,18 @@ var locomotive = require('locomotive'),
 	passport = require('passport');
 
 AccountController.authenticate = function() {
-	console.log('### User is attempting authentication.');
 	passport.authenticate('local', {
-		successRedirect: '/',
+		successRedirect: global.urlAttempted,
 		failureRedirect: '/login'
 	})(this.req, this.res, this.next); // uses req, res, then continues to the next express middlewares.
 };
 
 AccountController.login = function() {
-	console.log('### User has requested an authentication prompt.');
-	this.title = 'voting-system-5000 >> login';
+        this.common = this.req.commonAttributes; // Always have this line in each controller method, at the top. There's probably a better way to do it...
 	this.render();
 };
 
 AccountController.logout = function() {
-	console.log('### User is terminating authentication.');
 	this.req.logout();
 	this.redirect('/');
 };
