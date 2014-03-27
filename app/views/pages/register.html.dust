@@ -119,7 +119,7 @@
             /*
              * Ajax-ify the form submission
              */
-            $("#register-form").on("submit", function(event) {
+            $("#register-form").on("valid", function(event) {
                 var postData = $(this).serialize();
                 $.post("/register", postData, function(data) {
                     var _doc = $(data);
