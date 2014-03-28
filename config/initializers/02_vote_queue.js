@@ -1,13 +1,10 @@
 /*
  * The VoteQueue is used to place increments/decrements of a Vote object's
- * votes_count property into a queue. If we were to update the votes_count
- * property of a Vote object from the app's pages#vote controller, then we'd have a race
- * condition because if more than one person place a vote at the same time
- * there's be many instaces of Vote objects instantiated at once, and trying to
- * save them all at once might cause some increments/decrements to be lost. So,
- * enter the VoteQueue. Every user that votes will have the controller method of
- * the /vote page place an increment/decrement operation in this queue so there
- * is never more than one increment/decrement being done at once.
+ * votes_count property into a queue. This is needed because if many people vote
+ * at once, we want to ensure that only one increment/decrement operation is
+ * performed at any given time, never concurrently. The controller method for
+ * the /votes page puts the operations into the VoteQueue. See pages#vote in
+ * app/controllers/pages_controller.js.
  */
 
 console.log('Begin VoteQueue initializers.');
@@ -39,3 +36,4 @@ global.VoteQueue.drain = function() {
 };
 
 console.log('End VoteQueue initializers.');
+
