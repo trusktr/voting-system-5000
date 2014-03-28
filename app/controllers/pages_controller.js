@@ -47,8 +47,12 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
                 {title:"Manage Election",  uri:"/admin"},
                 {title:"Logout",           uri:"/logout"}
             ],
-            thisPage: this.req.url
+            thisPage: this.req.url,
+            user: this.req.user
         };
+        //delete this.req.commonAttributes.user.password;
+        //delete this.req.commonAttributes.user.ssn; // should we allow SSN to go to the front end?
+        //delete this.req.commonAttributes.user.votes_hash; // And what about the vote hash?
 
         var menu = this.req.commonAttributes.menu;
 
@@ -85,8 +89,8 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
      * The root page of the app.
      */
     PagesController.root = function() {
+        this.common = this.req.commonAttributes; // Always have this line in each controller method, at the top. There's probably a better way to do it...
         var viewContext = this;
-        viewContext.common = this.req.commonAttributes; // Always have this line in each controller method, at the top. There's probably a better way to do it...
 
         /*
          * Example usage of a model:
@@ -118,8 +122,8 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
     };
 
     PagesController.register = function() {
+        this.common = this.req.commonAttributes; // Always have this line in each controller method, at the top. There's probably a better way to do it...
         var viewContext = this;
-        viewContext.common = this.req.commonAttributes; // Always have this line in each controller method, at the top. There's probably a better way to do it...
 
         var Voter = require("../models/voter.js");
 
@@ -147,35 +151,102 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
     };
 
     PagesController.vote = function() {
+        this.common = this.req.commonAttributes; // Always have this line in each controller method, at the top. There's probably a better way to do it...
         var viewContext = this;
-        viewContext.common = this.req.commonAttributes; // Always have this line in each controller method, at the top. There's probably a better way to do it...
 
+        var Vote = require("../models/vote.js");
         var VoteTopic = require("../models/vote_topic.js");
 
         if (Object.keys(this.req.body).length > 0) { // if we have POST variables.
 
             console.log(" -- Getting vote topics for vote page.");
-            VoteTopic.getAll(function(err, topics) {
-                //TODO: make an array of errors. Make each template handle the array in skeleton.dust.
-                if (saveError) {
-                    viewContext.modalError = true;
-                    viewContext.modalMessage = "Could not save vote topics.";
+            var voterChoice = this.req.body;
+
+            /*
+             * votes_hash format example:
+             * Vote Topic Name:Chosen Option;Vote Topic Name:Chosen Option;Vote Topic Name:Chosen Option
+             */
+            var votes_hash = this.req.user.votes_hash; // TODO: This will eventually be encrypted, and we then have to unencrypt it to get te value.
+
+            /*
+             * Check if user already has a vote saved for the corresponding Vote object of the same option value.
+             * If so
+             *     do nothing with the Vote object.
+             * If not
+             *     check if the user has previously chosen another option of the same Vote name.
+             *     If so
+             *         decrement the count for the other Vote object option
+             *         replace the user's vote of same name with the new option.
+             *     If not
+             *         do nothing
+             *     increment the count for the Vote object corresponding with the user's new option
+             */
+                //Check if user already has a vote saved for the corresponding Vote object of the same option value.
+                var hasVotedOnThisTopicBefore = false;
+                var hasSubmittedThisChoiceBefore = false;
+                var previousChoice = "";
+                var votes_hash_array = [];
+                if (votes_hash && typeof votes_hash == "string" && votes_hash.length > 0) { // if the user has a vote_hash
+                    votes_hash_array = votes_hash.split(";");
+                    for (var i=0; i<votes_hash_array.length; i++) { // for each vote the user has already placed
+                        var name = votes_hash_array[i].split(":")[0];
+                        var choice = votes_hash_array[i].split(":")[1];
+
+                        if (voterChoice.name == name) {
+                            hasVotedOnThisTopicBefore = true;
+                            previousChoice = choice; // record the user's previous choice for later
+                            if (voterChoice.choice == previousChoice) { // if voter has already submitted this exact choice before.
+                                hasSubmittedThisChoiceBefore = true;
+                            }
+                        }
+                    }
                 }
-                if (err) {
-                    viewContext.modalError = true;
-                    viewContext.modalMessage = "Could not get vote topics.";
+
+                if (hasSubmittedThisChoiceBefore) { // if so
+                    // do nothing
                 }
-                viewContext.modalMessage = "All changes saved!";
-                viewContext.voteTopics = topics;
-                viewContext.render();
-            });
+                else { // if not
+
+                    Vote.find({name: voterChoice.name}, function(err, votes) {
+                        if (err) {
+                            viewContext.modalError = true;
+                            viewContext.modalMessage = "Could not find votes.";
+                        }
+
+                        votes.forEach(function(vote) { // synchronous forEach
+                            //check if the user has previously chosen another option of the same Vote name.
+                            if (hasVotedOnThisTopicBefore) { // if so
+                                //decrement the count for the other Vote object option
+                                if (vote.option == previousChoice) {
+                                    --vote.votes_count; // decrement the previous choice that no longer holds.
+                                }
+                            }
+                            //increment the count for the Vote object corresponding with the user's new option
+                            if (vote.option == voterChoice.choice) {
+                                ++vote.votes_count;
+                            }
+                        });
+
+
+                        // Get all topics to give to the view.
+                        VoteTopic.getAll(function(err, topics) {
+                            if (err) {
+                                viewContext.modalError = true;
+                                viewContext.modalMessage = "Could not get vote topics.";
+                            }
+                            viewContext.modalMessage = "Vote saved!";
+                            viewContext.voteTopics = topics;
+                            viewContext.render();
+                        });
+                    });
+                }
         }
         else { // if no POST (we don't care about GET for this page).
             // Vote.find(function(err, topics) {
             VoteTopic.getAll(function(err, topics) {
                 if (err) {
-                    viewContext.error = true;
-                    viewContext.message = "Error: Could not get vote topics.";
+                    viewContext.modalError = true;
+                    viewContext.modalMessage = "Error: Could not get vote topics.";
                 }
                 viewContext.voteTopics = topics;
                 viewContext.render();
@@ -187,8 +258,8 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
      * Handles the /results page.
      */
     PagesController.results = function() {
+        this.common = this.req.commonAttributes; // Always have this line in each controller method, at the top. There's probably a better way to do it...
         var viewContext = this;
-        viewContext.common = this.req.commonAttributes; // Always have this line in each controller method, at the top. There's probably a better way to do it...
         viewContext.render();
     };
 
@@ -196,12 +267,8 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
      * Handles requests to the /admin page
      */
     PagesController.admin = function() {
+        this.common = this.req.commonAttributes; // Always have this line in each controller method, at the top. There's probably a better way to do it...
         var viewContext = this;
-        viewContext.common = this.req.commonAttributes; // Always have this line in each controller method, at the top. There's probably a better way to do it...
-        viewContext.user = this.req.user;
-        delete viewContext.user.password;
-        delete viewContext.user.ssn; // should we allow SSN to go to the front end?
-        delete viewContext.user.votes_hash; // And what about the vote hash?
 
         var async = require("async"); // control flow tool for calling multiple asynchronous functions.
 
