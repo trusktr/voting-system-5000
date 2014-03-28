@@ -46,7 +46,7 @@ module.exports = function routes() {
 	this.match('/', 'pages#root');
         this.match('/register', 'pages#register', {via: ['get','post']});
         this.match('/vote', [lock, isNotAdmin]);
-        this.match('/vote', 'pages#vote');
+        this.match('/vote', 'pages#vote', {via: ['get', 'post']});
         this.match('/results', 'pages#results');
         this.match('/admin', [lock, isAdmin]);
         this.match('/admin', 'pages#admin', {via: ['get', 'post']});

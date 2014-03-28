@@ -71,26 +71,13 @@
         /*
          * Builds the data model containing the user's vote for each topic.
          */
-        function constructDataModel() {
-            var dataModel = { voteTopics: [] };
+        function constructDataModel(_button) {
+            var dataModel = {};
 
-            $(".voteTopic:not(.sample)").each(function() {
-                var _voteTopic = $(this);
-                var topic = {};
+            var _voteTopic = _button.closest(".voteTopic");
 
-                topic.name = _voteTopic.find("input[name=topicName]").val();
-                topic.options = [];
-                if (_voteTopic.find(".vote-topic-type-buttons a:not(.secondary)").is("[href=multiple]")) {
-                    _voteTopic.find(".topic-specifics.multiple input").each(function() {
-                        var option = $(this).val();
-                        topic.options.push(option);
-                    });
-                }
-                else if (_voteTopic.find(".vote-topic-type-buttons a:not(.secondary)").is("[href=yesno]")) {
-                    topic.options = ["Yes","No"];
-                }
-                dataModel.voteTopics.push(topic);
-            });
+            dataModel.name = _voteTopic.find(".voteTopicName").text();
+            dataModel.choice = _button.text();
             return dataModel;
         }
 
@@ -114,6 +101,23 @@
              * vote count update to the server.
              */
             $("body").on("click", ".vote-topic-selection-buttons .button", function(event) {
+                var data = constructDataModel($(this));
+                console.log(data);
+                $.post("/vote", data, function(data) {
+                    var _doc = $(data); // backend returns HTML pages.
+                    var _thisBody = $("body");
+                    if (_doc.find("#modalMessage").length > 0) {
+                        $(".modalMessage").html(_doc.find("#modalMessage").html());
+                        if ($(".joyride-tip-guide").length > 0) {
+                            $(document).foundation('joyride', 'stop');
+                        }
+                        $(document).foundation('joyride', 'start');
+                        console.log("Vote saved.");
+                    }
+                    else {
+                        console.log("Vote saved.");
+                    }
+                });
             });
         });
     </script>

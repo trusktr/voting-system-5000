@@ -1,10 +1,10 @@
 
             <!-- Feed Entry --><!-- This to be data pulled from db -->
-            <div class="row">
+            <div class="row voteTopic">
                 <!--<div class="large-2 columns small-3"><img src="http://placehold.it/80x80&text=[{name}]" /></div>-->
                 <!--<div class="large-10 columns">-->
                 <div class="large-12 columns">
-                    <p><strong>{name}</strong></p>
+                    <p><strong class="voteTopicName">{name}</strong></p>
                     <div class="row">
                         <div class="large-12 columns"> <!-- most of these are going to be VARs -->
 

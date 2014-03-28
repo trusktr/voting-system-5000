@@ -29,7 +29,7 @@ global.VoteQueue = async.queue(function(voteChange, callback) { // This function
             callback();
         });
     });
-}, 1);
+}, 1); // Allow only 1 worker at a time.
 
 global.VoteQueue.drain = function() {
     console.log(" -- VoteQueue is empty.");

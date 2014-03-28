@@ -166,7 +166,7 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
              * votes_hash format example:
              * Vote Topic Name:Chosen Option;Vote Topic Name:Chosen Option;Vote Topic Name:Chosen Option
              */
-            var votes_hash = this.req.user.votes_hash; // TODO: This will eventually be encrypted, and we then have to unencrypt it to get te value.
+            var votes_hash = this.req.user.votes_hash; // TODO: This will eventually be encrypted, and we then have to unencrypt it to get te value, and encrypt it to store it back in the following lines below..
 
             /*
              * Check if user already has a vote saved for the corresponding Vote object of the same option value.
@@ -180,11 +180,14 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
              *     If not
              *         do nothing
              *     increment the count for the Vote object corresponding with the user's new option
+             *     Save new vote to the user's votes_hash
              */
+                // TODO: The below implementation of the above pseudo code can definitely be optimized. But I was in a hurry. xD
                 //Check if user already has a vote saved for the corresponding Vote object of the same option value.
                 var hasVotedOnThisTopicBefore = false;
                 var hasSubmittedThisChoiceBefore = false;
                 var previousChoice = "";
+                var votes_hash_found_index = null;
                 var votes_hash_array = [];
                 if (votes_hash && typeof votes_hash == "string" && votes_hash.length > 0) { // if the user has a vote_hash
                     votes_hash_array = votes_hash.split(";");
@@ -192,57 +195,80 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
                         var name = votes_hash_array[i].split(":")[0];
                         var choice = votes_hash_array[i].split(":")[1];
 
+                        console.log(" ##### ::::: "+voterChoice.name+" "+ name);
+
                         if (voterChoice.name == name) {
                             hasVotedOnThisTopicBefore = true;
                             previousChoice = choice; // record the user's previous choice for later
+                            votes_hash_found_index = i;
                             if (voterChoice.choice == previousChoice) { // if voter has already submitted this exact choice before.
                                 hasSubmittedThisChoiceBefore = true;
                             }
                         }
                     }
+
+                    // Save new vote to the user's votes_hash
+                    if (votes_hash_found_index) {
+                        console.log("11111111111111111111111111111111111111111111111111111111");
+                        votes_hash_array[votes_hash_found_index] = voterChoice.name+":"+voterChoice.choice;
+                        votes_hash = votes_hash_array.join(";");
+                    }
+                    else {
+                        console.log("2222222222222222222222222222222222222222222222222222222222222222");
+                        votes_hash += ";"+voterChoice.name+":"+voterChoice.choice;
+                    }
+                }
+                else {
+                    // Save new vote to the user's votes_hash
+                        console.log("3333333333333333333333333333333333333333333333333333333333333333333333333333");
+                    votes_hash = voterChoice.name+":"+voterChoice.choice;
                 }
 
                 if (hasSubmittedThisChoiceBefore) { // if so
+                    console.log(" -- Doing nothing. Just kiddding.");
                     // do nothing
                 }
                 else { // if not
 
-                    Vote.find({name: voterChoice.name}, function(err, votes) {
-                        if (err) {
-                            viewContext.modalError = true;
-                            viewContext.modalMessage = "Could not find votes.";
-                        }
-
-                        votes.forEach(function(vote) { // synchronous forEach
-                            //check if the user has previously chosen another option of the same Vote name.
-                            if (hasVotedOnThisTopicBefore) { // if so
-                                //decrement the count for the other Vote object option
-                                if (vote.option == previousChoice) {
-                                    --vote.votes_count; // decrement the previous choice that no longer holds.
-                                }
-                            }
-                            //increment the count for the Vote object corresponding with the user's new option
-                            if (vote.option == voterChoice.choice) {
-                                ++vote.votes_count;
-                            }
+                    //check if the user has previously chosen another option of the same Vote name.
+                    if (hasVotedOnThisTopicBefore) { // if so
+                        //decrement the count for the other Vote object option
+                        // i.e. decrement the previous choice that no longer holds.
+                        global.VoteQueue.push({
+                            name: voterChoice.name,
+                            option: previousChoice,
+                            giveOrTake: -1
                         });
+                    }
 
-
-                        // Get all topics to give to the view.
-                        VoteTopic.getAll(function(err, topics) {
-                            if (err) {
-                                viewContext.modalError = true;
-                                viewContext.modalMessage = "Could not get vote topics.";
-                            }
-                            viewContext.modalMessage = "Vote saved!";
-                            viewContext.voteTopics = topics;
-                            viewContext.render();
-                        });
+                    //increment the count for the Vote object corresponding with the user's new option
+                    global.VoteQueue.push({
+                        name: voterChoice.name,
+                        option: voterChoice.choice,
+                        giveOrTake: +1
                     });
                 }
+
+            // Save the user (we modified the votes_hash).
+            this.req.user.votes_hash = votes_hash;
+            this.req.user.save(function(err) {
+                if (err) return new Error("Unable to save user."); // TODO: Handle this better?
+
+                // Get all topics to give to the view.
+                VoteTopic.getAll(function(err, topics) {
+                    if (err) {
+                        viewContext.modalError = true;
+                        viewContext.modalMessage = "Could not get vote topics.";
+                    }
+                    viewContext.modalMessage = "Vote saved!";
+                    viewContext.voteTopics = topics;
+
+                    // And finally:
+                    viewContext.render();
+                });
+            });
         }
         else { // if no POST (we don't care about GET for this page).
-            // Vote.find(function(err, topics) {
             VoteTopic.getAll(function(err, topics) {
                 if (err) {
                     viewContext.modalError = true;
