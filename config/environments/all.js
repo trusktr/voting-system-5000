@@ -19,6 +19,14 @@ var express = require('express'),
     passport = require('passport');
 
 
+/*
+ *Disable minification of templates by Dust.js.
+ */
+kleiDust.getDust().optimizers.format = function (ctx, node) {
+    return node;
+};
+
+
 
 module.exports = function() {
   console.log(' --- Executing settings for all environments.');
