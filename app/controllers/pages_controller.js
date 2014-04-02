@@ -127,7 +127,9 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
 
         var Voter = require("../models/voter.js");
 
+        console.log("Register controller method");
         if (Object.keys(this.req.body).length > 0) { // if we have POST variables.
+            console.log("Submitting registration........");
             var voter = new Voter(this.req.body); // TODO: We need server-side validation here.
             voter.save(function(err) {
                 if (err) {
@@ -139,13 +141,16 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
                     viewContext.modalMessage = "Thanks for registering, "+voter.name+"! <a href='/vote'>Place your vote.</a>";
                     viewContext.voter = voter;
                 }
+                console.log("Voter saved!!!!!...");
                 viewContext.render();
             });
         }
         else if (Object.keys(this.req.query).length > 0) { // if we have GET variables.
+                console.log("Register page accessed, no submission yet!!!....");
             viewContext.render();
         }
         else { // no GET or POST
+                console.log("Register page accessed, no submission yet!!!....");
             viewContext.render();
         }
     };
@@ -275,8 +280,10 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
                     viewContext.modalMessage = "Error: Could not get vote topics.";
                 }
                 viewContext.voteTopics = topics;
+                console.log(" -- Vote topics got!!!!!");
                 viewContext.render();
             });
+            console.log(" -- getting vote topics......");
         }
     };
 
