@@ -1,6 +1,16 @@
 {>skeleton /}
 
 {<header} {!Put all header stuff here.!}
+    <style>
+        .progress .meter {
+            width: 0%;
+            transition: 1s;
+            -webkit-transition: 1s;
+            -moz-transition: 1s;
+            -ms-transition: 1s;
+            -o-transition: 1s;
+        }
+    </style>
 {/header}
 
 {<body} {!Put all html content of the view here.!}
@@ -18,15 +28,15 @@
                   <legend>President</legend>
                   <label>Jone Doe (%)</label>
                        <div class="progress large-8 success round">
-                       <span class="meter" style="width: 60%"></span>
+                       <span class="meter" data-percent="60"></span>
                        </div>
                   <label>Hilary Clinton (%)</label>
                        <div class="progress large-8 alert round">
-                       <span class="meter" style="width:40%"></span>
+                       <span class="meter" data-percent="40"></span>
                        </div>
                   <label>Other (%)</label>
                        <div class="progress large-8 round">
-                       <span class="meter" style="width: 5%"></span>
+                       <span class="meter" data-percent=" 5"></span>
                        </div>
              </fieldset>
         </form>
@@ -39,15 +49,15 @@
                   <legend>Propositions</legend>
                   <label>Proposition A (%)</label>
                        <div class="progress large-8 alert round">
-                       <span class="meter" style="width: 30%"></span>
+                       <span class="meter" data-percent=" 30"></span>
                        </div>
                   <label>Proposition B (%)</label>
                        <div class="progress large-8 success round">
-                       <span class="meter" style="width: 85%"></span>
+                       <span class="meter" data-percent=" 85"></span>
                        </div>
                   <label>Proposition C (%)</label>
                        <div class="progress large-8 secondary round">
-                       <span class="meter" style="width: 5%"></span>
+                       <span class="meter" data-percent=" 5"></span>
                        </div>
              </fieldset>
         </form>
@@ -55,7 +65,12 @@
         </div>
 {/body}
 
-{<foobar} {!Put all scripts here.!}
+{<footer} {!Put all scripts here.!}
     <script>
+    $(document).ready(function() {
+        $(".meter").each(function() {
+            $(this).width($(this).attr("data-percent")+"%");
+        });
+    });
     </script>
-{/foobar}
+{/footer}
