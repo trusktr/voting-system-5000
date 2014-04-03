@@ -22,20 +22,20 @@
             </div>
         </div>
         <div class="row">
-        <div class="large-8 columns">
+        <div class="large-12 columns">
         <form>
              <fieldset>
                   <legend>President</legend>
                   <label>Jone Doe (%)</label>
-                       <div class="progress large-8 success round">
+                       <div class="progress large-12 success round">
                        <span class="meter" data-percent="60"></span>
                        </div>
                   <label>Hilary Clinton (%)</label>
-                       <div class="progress large-8 alert round">
+                       <div class="progress large-12 alert round">
                        <span class="meter" data-percent="40"></span>
                        </div>
                   <label>Other (%)</label>
-                       <div class="progress large-8 round">
+                       <div class="progress large-12 round">
                        <span class="meter" data-percent=" 5"></span>
                        </div>
              </fieldset>
@@ -43,20 +43,20 @@
         </div>
         </div>
         <div class="row">
-        <div class="large-8 columns">
+        <div class="large-12 columns">
         <form>
              <fieldset>
                   <legend>Propositions</legend>
                   <label>Proposition A (%)</label>
-                       <div class="progress large-8 alert round">
+                       <div class="progress large-12 alert round">
                        <span class="meter" data-percent=" 30"></span>
                        </div>
                   <label>Proposition B (%)</label>
-                       <div class="progress large-8 success round">
+                       <div class="progress large-12 success round">
                        <span class="meter" data-percent=" 85"></span>
                        </div>
                   <label>Proposition C (%)</label>
-                       <div class="progress large-8 secondary round">
+                       <div class="progress large-12 secondary round">
                        <span class="meter" data-percent=" 5"></span>
                        </div>
              </fieldset>
