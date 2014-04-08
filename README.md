@@ -1,8 +1,5 @@
 # Voting System 5000
 
-Voting System 5000 Report
-=========
-
 Voting System 5000 is a web-based voting system developed during Spring 2014 as a project for CSc 250 (Computer Security and Privacy) at California State University, Sacramento. The project has been sponsored by Dr. Isaac Ghansah.
 
 Team Members:
