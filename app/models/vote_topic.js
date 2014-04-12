@@ -20,7 +20,7 @@ VoteTopic.getAll = function(callback) {
         if (err) return callback(err, null);
 
         var topics = {};
-
+        
         votes.forEach(function(vote) { // synchronous forEach
 
             if (typeof topics[vote.name] == "undefined") { //Creates an object with however many optinons (ex. name, options array, counts array)
@@ -28,9 +28,11 @@ VoteTopic.getAll = function(callback) {
                 topics[vote.name].name = vote.name;
                 topics[vote.name].options = [];
                 topics[vote.name].counts = []; // This creates an array of counts
+                topics[vote.name].totalVotes = 0;
             }
             topics[vote.name].options.push(vote.option); // Push otions into the array of options for this specific topic
             topics[vote.name].counts.push(vote.votes_count);
+            topics[vote.name].totalVotes += vote.votes_count;
         });
 
         // convert topics from object to array.

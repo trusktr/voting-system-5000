@@ -306,7 +306,18 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
                 viewContext.modalMessage = "Error: Could not get vote topics.";
             }
             // Each topic contains a topic, a name, and an optins
-            viewContext.voteTopics = topics;
+            viewContext.voteTopics = voteTopics;
+            //Create 2 arrays for multi choice and yes no choices
+            viewContext.multiChoiceTopics = [];
+            viewContext.yesNoTopics = [];
+            voteTopics.forEach(function(topic){
+                if (topic.yesno){
+                    viewContext.yesNoTopics.push(topic);
+                }
+                else{
+                    viewContext.multiChoiceTopics.push(topic);
+                }
+            });
             // Any instruction after the render() will not be shown on the
             // template
             

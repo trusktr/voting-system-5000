@@ -21,44 +21,35 @@
                 </div>
             </div>
         </div>
+       {#multiChoiceTopics}
         <div class="row">
         <div class="large-12 columns">
         <form>
              <fieldset>
-                  <legend>President</legend>
-                  <label>Jone Doe (%)</label>
-                       <div class="progress large-12 success round">
-                       <span class="meter" data-percent="60"></span>
-                       </div>
-                  <label>Hilary Clinton (%)</label>
-                       <div class="progress large-12 alert round">
-                       <span class="meter" data-percent="40"></span>
-                       </div>
-                  <label>Other (%)</label>
-                       <div class="progress large-12 round">
-                       <span class="meter" data-percent=" 5"></span>
-                       </div>
+                  <legend>{name}</legend>
+                    {#options}
+                      <label>{options[$idx]}</label>
+                           <div class="progress large-12 success round">
+                           <span class="meter" data-percent="60" data-count="{counts[$idx]}" data-total-votes="{totalVotes}"></span>
+                           </div>
+                    {/options}
              </fieldset>
         </form>
         </div>
         </div>
+        {/multiChoiceTopics}
+
         <div class="row">
         <div class="large-12 columns">
         <form>
              <fieldset>
                   <legend>Propositions</legend>
-                  <label>Proposition A (%)</label>
+                    {#yesNoTopics}
+                  <label>{name}</label>
                        <div class="progress large-12 alert round">
-                       <span class="meter" data-percent=" 30"></span>
+                       <span class="meter" data-percent="60" data-count="{counts[0]}" data-total-votes="{totalVotes}"></span>
                        </div>
-                  <label>Proposition B (%)</label>
-                       <div class="progress large-12 success round">
-                       <span class="meter" data-percent=" 85"></span>
-                       </div>
-                  <label>Proposition C (%)</label>
-                       <div class="progress large-12 secondary round">
-                       <span class="meter" data-percent=" 5"></span>
-                       </div>
+                    {/yesNoTopics}
              </fieldset>
         </form>
         </div>
@@ -69,6 +60,10 @@
     <script>
     $(document).ready(function() {
         $(".meter").each(function() {
+            var percent = $(this).attr("data-count")/$(this).attr("data-total-votes")*100;
+            var labelTxt = $(this).parent().prev("label").text();
+            $(this).parent().prev("label").text("" + labelTxt + " (" + percent + "%)");
+            $(this).attr("data-percent", percent);
             $(this).width($(this).attr("data-percent")+"%");
         });
     });
