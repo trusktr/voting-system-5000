@@ -293,7 +293,28 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
     PagesController.results = function() {
         this.common = this.req.commonAttributes; // Always have this line in each controller method, at the top. There's probably a better way to do it...
         var viewContext = this;
-        viewContext.render();
+        
+        // Make votes_count available to the Results page by creating a new
+        // model
+        var VoteTopic = require("../models/vote_topic.js"); // It gets the required assignments from w/i vote_topics.js & assigns them to VoteTopic
+        // line 87 from vote_topic.js
+        
+        // NOW, use VoteTopic model to get the information required
+        VoteTopic.getAll(function(err, voteTopics){ // function takes 2 param
+            if (err) {
+                viewContext.modalError = true;
+                viewContext.modalMessage = "Error: Could not get vote topics.";
+            }
+            // Each topic contains a topic, a name, and an optins
+            viewContext.voteTopics = topics;
+            // Any instruction after the render() will not be shown on the
+            // template
+            
+            // NOW claculate percentages before rendering
+            viewContext.render();
+
+        }); // Get all takes an empty function
+
     };
 
     /*

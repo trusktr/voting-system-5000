@@ -72,5 +72,6 @@
             $(this).width($(this).attr("data-percent")+"%");
         });
     });
+        console.log("Hello World");
     </script>
 {/footer}
