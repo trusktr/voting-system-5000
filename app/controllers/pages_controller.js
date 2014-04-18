@@ -36,7 +36,14 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
      */
     PagesController.all = function() {
         console.log('### pages#all');
-
+//		//var Election = require("../models/election.js");
+//		Election.find( {/* empty search criteria */}, function(err, election) {
+//			console.log("Election Status Found?");
+//			if (election.status == "Pre-Election")
+//			election.forEach(function(election) {
+//				console.log(" ########### Election status: "+election.status);
+//			});
+//		});		
         this.req.commonAttributes = {
             title: '★✮☆ Voting System 5000',
             menu: [
