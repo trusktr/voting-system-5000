@@ -72,6 +72,13 @@
   </div>
   <div class="row">
     <div class="large-12 columns">
+      <label>Is your vote public record? (Senators, etc)
+        <input name="public_vote" id="public_vote_yes" type="checkbox" /><label for="public_vote_yes">Yes</label>
+      </label>
+    </div>
+  </div>  
+  <div class="row">
+    <div class="large-12 columns">
       <label>Email Address
         <input name="email" type="email" pattern="^(([^&lt;&gt;()[\]\\.,;:\s@\&quot;]+(\.[^&lt;&gt;()[\]\\.,;:\s@\&quot;]+)*)|(\&quot;.+\&quot;))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$" placeholder="example@example.com" />
       </label>
