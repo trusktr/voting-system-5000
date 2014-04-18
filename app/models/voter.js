@@ -17,6 +17,7 @@ var VoterSchema = new Schema({
     , voted      : { type: Boolean, default: false }
     , votes_hash : { type: String, default: "" }
     , mod_date   : { type: Date, default: Date.now }
+	, public_vote: { type: Boolean, default: false }
 });
 VoterSchema.plugin(require('mongoose-unique-validator'));
 

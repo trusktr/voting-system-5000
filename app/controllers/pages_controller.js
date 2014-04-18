@@ -171,8 +171,8 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
              * votes_hash format example:
              * Vote Topic Name:Chosen Option;Vote Topic Name:Chosen Option;Vote Topic Name:Chosen Option
              */
-            var votes_hash = this.req.user.votes_hash; // TODO: This will eventually be encrypted, and we then have to unencrypt it to get te value, and encrypt it to store it back in the following lines below..
-
+            var votes_hash = this.req.user.votes_hash; // TODO: This will eventually be encrypted, and we then have to decrypt it to get te value, and encrypt it to store it back in the following lines below..
+			
             /*
              * Check if user already has a vote saved for the corresponding Vote object of the same option value.
              * If so
