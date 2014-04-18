@@ -8,18 +8,3 @@ module.exports = mongoose.model('Election', new Schema({
     , status      : { type: String, default: "Pre-election", required: true }
     , mod_date    : { type: Date, default: Date.now }
 }));
-
-// hard code the election status
-//var Election = module.exports;
-//Election.find({/* empty search criteria */}, function(err, estat) {
-//    var electionDetails = {
-//        status          : "Pre-election"
-//    };
-//    if (estat) {
-//        estat.update(electionDetails, function() { });
-//    }
-//    else {
-//        estat = new Election(electionDetails);
-//        estat.save();
-//    }
-//});
