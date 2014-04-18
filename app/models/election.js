@@ -5,6 +5,6 @@ var mongoose = require("mongoose"),
 
 module.exports = mongoose.model('Election', new Schema({
     election_id   : ObjectId
-    , status      : { type: String, default: "Pre-election", required: true }
+    , status      : { type: String, required: true }
     , mod_date    : { type: Date, default: Date.now }
 }));
