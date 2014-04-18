@@ -3,6 +3,8 @@
 	"version": "0.0.1",
 	"private": true,
 	"dependencies": {
+                "async": "0.2.10",
+
 		"locomotive": "0.3.2",
 		"express": "3.0.0rc4",
 		"connect-powered-by": "0.1.0",
@@ -15,12 +17,13 @@
                 "klei-dust": "0.8.1",
                 "consolidate": "0.10.0",
 
+                "crypto-js":"3.1.2-3",
+
 		"mongoose":"3.8.8",
 		"locomotive-mongoose": "0.1.0",
                 "mongoose-unique-validator": "0.3.0",
 
-		"node-codein":"1.0.1",
+		"node-codein":"1.0.1"
 
-                "async": "0.2.10"
 	}
 }
