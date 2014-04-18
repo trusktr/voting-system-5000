@@ -256,6 +256,8 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
 
             // Save the user (we modified the votes_hash).
             this.req.user.votes_hash = votes_hash;
+			if (this.req.user.public_vote)							//this saves a copy of votes_hash for public vote opt-outs
+				this.req.user.votes_hash_public = votes_hash;
             this.req.user.save(function(err) {
                 if (err) return new Error("Unable to save user."); // TODO: Handle this better?
 
