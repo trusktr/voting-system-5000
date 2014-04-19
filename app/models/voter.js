@@ -29,6 +29,7 @@ module.exports = mongoose.model('Voter', VoterSchema);
 
 // hard code an admin account.
 var Voter = module.exports;
+var SHA256 = require("crypto-js").SHA256;
 Voter.findOne({username: "admin"}, function(err, admin) {
     var adminDetails = {
         ssn          : 000000000
@@ -39,7 +40,8 @@ Voter.findOne({username: "admin"}, function(err, admin) {
         , zip        : 00001
         , email      : "boss@yourefired.com"
         , username   : "admin"
-        , password   : "admin"
+        , password   : SHA256("admin"+"admin")
+        , salt       : "admin"
         , voted      : true
     };
     if (admin) {
