@@ -253,7 +253,7 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
                         giveOrTake: +1
                     });
 					
-					var rsa = require("bigint");
+					var rsa = require("node-bignumber");
 					var key = new rsa.Key();
 					key.generate(1024, "10001");							//random key for now
 					console.log("Key:\n");
