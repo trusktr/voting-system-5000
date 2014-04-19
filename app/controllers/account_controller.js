@@ -10,7 +10,7 @@ var locomotive = require('locomotive'),
 
 AccountController.authenticate = function() {
 	passport.authenticate('local', {
-		successRedirect: global.urlAttempted,
+		successRedirect: global.urlAttempted, // TODO: Doesn't always redirect to the proper page. needs testing.
 		failureRedirect: '/login'
 	})(this.req, this.res, this.next); // uses req, res, then continues to the next express middlewares.
 };
