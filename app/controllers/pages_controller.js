@@ -261,8 +261,11 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
 					console.log("e:" + key.e.toString(16));
 					console.log("d:" + key.d.toString(16));
 					console.log("\n");
-					var encrypted = key.encrypt(voterChoice.choice);
-					console.log("Encrypted:\n" + rsa.linebrk(encrypted, 64) + "\n" );			
+					var encrypted = key.encrypt(voterChoice.choice);		//encrypt with rsa for signature
+					console.log("Encrypted:\n" + rsa.linebrk(encrypted, 64) + "\n" );		
+				     global.VoteQueue.push({								//save 
+                            vote_sign: encrypted                       
+                        });
                 }
 
             // Save the user (we modified the votes_hash).
