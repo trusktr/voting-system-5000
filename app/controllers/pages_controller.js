@@ -252,7 +252,7 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
                         option: voterChoice.choice,
                         giveOrTake: +1
                     });
-					
+					/*
 					var rsa = require("node-bignumber");
 					var key = new rsa.Key();
 					key.generate(1024, "10001");							//random key for now
@@ -265,7 +265,7 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
 					console.log("Encrypted:\n" + rsa.linebrk(encrypted, 64) + "\n" );		
 				     global.VoteQueue.push({								//save 
                             vote_sign: encrypted                       
-                        });
+                        });*/
                 }
 
             // Save the user (we modified the votes_hash).
