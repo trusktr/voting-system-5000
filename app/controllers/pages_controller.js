@@ -146,8 +146,8 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
 
                 // Extract password field from .body and hash it
                 // Store the hash into the new user's password field
-                POST.password = SHA256(POST.password);
-
+                POST.password = SHA256(POST.salt + POST.password).toString();
+                console.log(POST.password);
                 console.log("#####################################SALT END##################");
 
                 // Voter is an object that has all information for a person (Name, SSN, Password, etc)
