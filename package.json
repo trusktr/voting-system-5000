@@ -8,7 +8,7 @@
 		"locomotive": "0.3.2",
 		"express": "3.0.0rc4",
 		"connect-powered-by": "0.1.0",
-
+		"node-bignumber": "1.2.1",
 		"passport":"0.1.12",
 		"passport-local":"0.1.6",
 

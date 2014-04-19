@@ -197,94 +197,32 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
         if (Object.keys(this.req.body).length > 0) { // if we have POST variables.
 
             console.log(" -- Getting vote topics for vote page.");
-            var voterChoice = this.req.body;
+            var voterChoice = this.req.body; // the choice sent from the front end.
 
             /*
              * votes_hash format example:
              * Vote Topic Name:Chosen Option;Vote Topic Name:Chosen Option;Vote Topic Name:Chosen Option
              */
-            var votes_hash = this.req.user.votes_hash; // TODO: This will eventually be encrypted, and we then have to decrypt it to get te value, and encrypt it to store it back in the following lines below..
+            var votes_hash = this.req.user.votes_hash;
+            // TODO: votes_hash will eventually be encrypted, and we then have to decrypt it to get te value, and encrypt it to store it back in the following lines below..
 			
-            /*
-             * Check if user already has a vote saved for the corresponding Vote object of the same option value.
-             * If so
-             *     do nothing with the Vote object.
-             * If not
-             *     check if the user has previously chosen another option of the same Vote name.
-             *     If so
-             *         decrement the count for the other Vote object option
-             *         replace the user's vote of same name with the new option.
-             *     If not
-             *         do nothing
-             *     increment the count for the Vote object corresponding with the user's new option
-             *     Save new vote to the user's votes_hash
-             */
-                // TODO: The below implementation of the above pseudo code can definitely be optimized. But I was in a hurry. xD
-                //Check if user already has a vote saved for the corresponding Vote object of the same option value.
-                var hasVotedOnThisTopicBefore = false;
-                var hasSubmittedThisChoiceBefore = false;
-                var previousChoice = "";
-                var votes_hash_found_index = null;
-                var votes_hash_array = [];
-                if (votes_hash && typeof votes_hash == "string" && votes_hash.length > 0) { // if the user has a vote_hash
-                    votes_hash_array = votes_hash.split(";");
-                    for (var i=0; i<votes_hash_array.length; i++) { // for each vote the user has already placed
-                        var name = votes_hash_array[i].split(":")[0];
-                        var choice = votes_hash_array[i].split(":")[1];
+            // if the voter already voted on this topic, delete it.
+            var previousChoice = votes_hash.match(new RegExp(voterChoice.name+":[^:;]*;")); // See JavaScript String.match() docs.
+            if ( previousChoice != null) {
+                votes_hash = votes_hash.replace(new RegExp(voterChoice.name+":[^:;]*;"), "");
+                // decrement the vote count for the previous choice.
+                previousChoice = previousChoice[0].split(":")[1].split(";")[0]; // reduce it to just the previous choice value.
+                global.VoteQueue.push({ name: voterChoice.name, option: previousChoice, giveOrTake: -1 });
+            }
 
-                        console.log(" ##### ::::: "+voterChoice.name+" "+ name);
+            // append the voter's vote to the votes hash.
+            votes_hash += voterChoice.name+":"+voterChoice.choice+";";
 
-                        if (voterChoice.name == name) {
-                            hasVotedOnThisTopicBefore = true;
-                            previousChoice = choice; // record the user's previous choice for later
-                            votes_hash_found_index = i;
-                            if (voterChoice.choice == previousChoice) { // if voter has already submitted this exact choice before.
-                                hasSubmittedThisChoiceBefore = true;
-                            }
-                        }
-                    }
+            // increment the vote count for this choice.
+            global.VoteQueue.push({ name: voterChoice.name, option: previousChoice, giveOrTake: +1 });
 
-                    // Save new vote to the user's votes_hash
-                    if (votes_hash_found_index) {
-                        console.log("11111111111111111111111111111111111111111111111111111111");
-                        votes_hash_array[votes_hash_found_index] = voterChoice.name+":"+voterChoice.choice;
-                        votes_hash = votes_hash_array.join(";");
-                    }
-                    else {
-                        console.log("2222222222222222222222222222222222222222222222222222222222222222");
-                        votes_hash += ";"+voterChoice.name+":"+voterChoice.choice;
-                    }
-                }
-                else {
-                    // Save new vote to the user's votes_hash
-                        console.log("3333333333333333333333333333333333333333333333333333333333333333333333333333");
-                    votes_hash = voterChoice.name+":"+voterChoice.choice;
-                }
-
-                if (hasSubmittedThisChoiceBefore) { // if so
-                    console.log(" -- Doing nothing. Just kiddding.");
-                    // do nothing
-                }
-                else { // if not
-
-                    //check if the user has previously chosen another option of the same Vote name.
-                    if (hasVotedOnThisTopicBefore) { // if so
-                        //decrement the count for the other Vote object option
-                        // i.e. decrement the previous choice that no longer holds.
-                        global.VoteQueue.push({
-                            name: voterChoice.name,
-                            option: previousChoice,
-                            giveOrTake: -1
-                        });
-                    }
-
-                    //increment the count for the Vote object corresponding with the user's new option
-                    global.VoteQueue.push({
-                        name: voterChoice.name,
-                        option: voterChoice.choice,
-                        giveOrTake: +1
-                    });
-                }
+            // TODO: if the user has submitted the same vote as before, don't use
+            // VoteQueue.
 
             // Save the user (we modified the votes_hash).
             this.req.user.votes_hash = votes_hash;
