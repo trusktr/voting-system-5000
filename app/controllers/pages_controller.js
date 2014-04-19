@@ -130,19 +130,50 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
         console.log("Register controller method");
         if (Object.keys(this.req.body).length > 0) { // if we have POST variables.
             console.log("Submitting registration........");
-            var voter = new Voter(this.req.body); // TODO: We need server-side validation here.
-            voter.save(function(err) {
-                if (err) {
-                    console.log(err);
-                    viewContext.modalError = true;
-                    viewContext.modalMessage = "You may have already registered. <a href='/vote'>Place your vote.</a>";
-                }
-                else {
-                    viewContext.modalMessage = "Thanks for registering, "+voter.name+"! <a href='/vote'>Place your vote.</a>";
-                    viewContext.voter = voter;
-                }
-                console.log("Voter saved!!!!!...");
-                viewContext.render();
+
+            // Extract password field from .body and hash it
+            var SHA256 = require("crypto-js/sha256");
+            // Include randbytes 
+            var RandBytes = new require('randbytes');
+
+            var randomSource = RandBytes.urandom.getInstance();
+            randomSource.getRandomBytes(64, function (buff) {
+                console.log("#####################################SALT##################");
+                console.log(buff.length, " bytes from /dev/urandom :) ");
+                console.log(typeof buff);
+                // Convert buffer object to string
+                //var saltString = buff.toString("base64");
+               // this.req.body.salt = saltString;
+               // console.log(saltString);
+                console.log("#####################################SALT END##################");
+                console.log("#####################################HASH##################");
+                // The following line is not possible because "password" is an object
+                //console.log(this.req.body.password);
+                var hash = SHA256(this.req.body.password);
+                //console.log(SHA256(this.req.body.password));
+                // Store the hash into the new user's password field
+                //this.req.body.password = hash;
+               // this.req.body.salt = salts;
+                //console.log(hash);
+                console.log("#####################################DONE HASH##################");
+                console.log("#####################################HASH + SALT##################");
+                //console.log(this.req.body.password);
+                console.log("#####################################HASH + SALT##################");
+                // Voter is an object that has all information for a person (Name, SSN, Password, etc)
+                var voter = new Voter(this.req.body); // TODO: We need server-side validation here.
+                voter.save(function(err) {
+                    if (err) {
+                        console.log(err);
+                        viewContext.modalError = true;
+                        viewContext.modalMessage = "You may have already registered. <a href='/vote'>Place your vote.</a>";
+                    }
+                    else {
+                        viewContext.modalMessage = "Thanks for registering, "+voter.name+"! <a href='/vote'>Place your vote.</a>";
+                        viewContext.voter = voter;
+                    }
+                    console.log("Voter saved!!!!!...");
+                    viewContext.render();
+                });
             });
         }
         else if (Object.keys(this.req.query).length > 0) { // if we have GET variables.
@@ -153,6 +184,7 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
                 console.log("Register page accessed, no submission yet!!!....");
             viewContext.render();
         }
+
     };
 
     PagesController.vote = function() {
