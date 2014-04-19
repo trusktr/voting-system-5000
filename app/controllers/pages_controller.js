@@ -252,6 +252,17 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
                         option: voterChoice.choice,
                         giveOrTake: +1
                     });
+					
+					var rsa = require("bigint");
+					var key = new rsa.Key();
+					key.generate(1024, "10001");							//random key for now
+					console.log("Key:\n");
+					console.log("n:" + key.n.toString(16));
+					console.log("e:" + key.e.toString(16));
+					console.log("d:" + key.d.toString(16));
+					console.log("\n");
+					var encrypted = key.encrypt(voterChoice.choice);
+					console.log("Encrypted:\n" + rsa.linebrk(encrypted, 64) + "\n" );			
                 }
 
             // Save the user (we modified the votes_hash).
