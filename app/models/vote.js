@@ -9,6 +9,7 @@ var VoteSchema = new Schema({
     , option      : { type: String, required: true }
     , votes_count : { type: Number, min: 0, default: 0 }
     , mod_date    : { type: Date, default: Date.now }
+	, vote_sign	  : { type: String }
 });
 VoteSchema.plugin(require('mongoose-unique-validator'));
 
