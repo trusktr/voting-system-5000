@@ -6,7 +6,7 @@
 
 console.log('Setting up configuration for all environments.');
 
-//var codein = require('node-codein'); // for visual debugging in a browser using element inspector.
+global.codein = require('node-codein'); // for visual debugging in a browser using element inspector.
 
 var express = require('express'),
     poweredBy = require('connect-powered-by'),

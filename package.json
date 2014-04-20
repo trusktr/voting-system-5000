@@ -1,30 +1,30 @@
 {
-	"name": "voting-system-5000",
-	"version": "0.0.1",
-	"private": true,
-	"dependencies": {
-                "async": "0.2.10",
+    "name": "voting-system-5000",
+    "version": "0.0.0",
+    "private": true,
+    "dependencies": {
+        "async": "0.2.10",
 
-		"locomotive": "0.3.2",
-		"express": "3.0.0rc4",
-		"connect-powered-by": "0.1.0",
-		"node-bignumber": "1.2.1",
-		"passport":"0.1.12",
-		"passport-local":"0.1.6",
+        "locomotive": "0.3.2",
+        "express": "3.0.0rc4",
+        "connect-powered-by": "0.1.0",
+        "passport":"0.1.12",
+        "passport-local":"0.1.6",
 
-		"ejs": "0.8.3",
-                "dustjs-linkedin": "2.3.4",
-                "klei-dust": "0.8.1",
-                "consolidate": "0.10.0",
+        "consolidate": "0.10.0",
+        "dustjs-linkedin": "2.3.4",
+        "klei-dust": "0.8.1",
 
-                "crypto-js":"3.1.2-3",
-                "randbytes":"0.0.1",
+        "crypto-js":"3.1.2-3",
+        "randbytes":"0.0.1",
+        "keypair":"1.0.0",
+        "node-rsa":"0.1.40",
 
-		"mongoose":"3.8.8",
-		"locomotive-mongoose": "0.1.0",
-                "mongoose-unique-validator": "0.3.0",
+        "mongoose":"3.8.8",
+        "locomotive-mongoose": "0.1.0",
+        "mongoose-unique-validator": "0.3.0",
 
-		"node-codein":"1.0.1"
+        "node-codein":"1.0.4"
 
-	}
+    }
 }

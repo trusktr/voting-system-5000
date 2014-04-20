@@ -7,7 +7,7 @@
  * app/controllers/pages_controller.js.
  */
 
-console.log('Begin VoteQueue initializers.');
+console.log('Begin VoteQueue initializer.');
 
 
 var async = require("async");
@@ -35,5 +35,5 @@ global.VoteQueue.drain = function() {
     console.log(" -- VoteQueue is empty.");
 };
 
-console.log('End VoteQueue initializers.');
+console.log('End VoteQueue initializer.');
 

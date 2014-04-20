@@ -133,7 +133,7 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
             console.log("Submitting registration........");
 
             var SHA256 = require("crypto-js/sha256");
-            // Include randbytes 
+            // Include randbytes
             var RandBytes = new require('randbytes');
 
             var randomSource = RandBytes.urandom.getInstance();
@@ -147,7 +147,7 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
                 // Extract password field from .body and hash it
                 // Store the hash into the new user's password field
                 POST.password = SHA256(POST.salt + POST.password).toString();
-                console.log(POST.password);
+
                 console.log("#####################################SALT END##################");
 
                 // Voter is an object that has all information for a person (Name, SSN, Password, etc)
@@ -185,55 +185,62 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
         var Vote = require("../models/vote.js");
         var VoteTopic = require("../models/vote_topic.js");
 
-        if (Object.keys(this.req.body).length > 0) { // if we have POST variables.
+        if (Object.keys(viewContext.req.body).length > 0) { // if we have POST variables.
 
-            console.log(" -- Getting vote topics for vote page.");
-            var voterChoice = this.req.body; // the choice sent from the front end.
+            console.log(" -- Incoming vote for user "+viewContext.req.user.username+": ");
+            console.log(viewContext.req.body);
+            var voterChoice = viewContext.req.body; // the choice sent from the front end.
+            var votes_hash = viewContext.req.user.votes_hash;
 
-            /*
-             * votes_hash format example:
-             * Vote Topic Name:Chosen Option;Vote Topic Name:Chosen Option;Vote Topic Name:Chosen Option
-             */
-            var votes_hash = this.req.user.votes_hash;
-            // TODO: votes_hash will eventually be encrypted, and we then have to decrypt it to get te value, and encrypt it to store it back in the following lines below..
-			
             // if the voter already voted on this topic, delete it.
             var previousChoice = votes_hash.match(new RegExp(voterChoice.name+":[^:;]*;")); // See JavaScript String.match() docs.
-            if ( previousChoice != null) {
-                votes_hash = votes_hash.replace(new RegExp(voterChoice.name+":[^:;]*;"), "");
+
+            if ( previousChoice != null) { // if user voted on this topic before.
                 // decrement the vote count for the previous choice.
                 previousChoice = previousChoice[0].split(":")[1].split(";")[0]; // reduce it to just the previous choice value.
                 global.VoteQueue.push({ name: voterChoice.name, option: previousChoice, giveOrTake: -1 });
             }
 
-            // append the voter's vote to the votes hash.
-            votes_hash += voterChoice.name+":"+voterChoice.choice+";";
-
             // increment the vote count for this choice.
-            global.VoteQueue.push({ name: voterChoice.name, option: previousChoice, giveOrTake: +1 });
+            global.VoteQueue.push({ name: voterChoice.name, option: voterChoice.choice, giveOrTake: +1 });
 
-            // TODO: if the user has submitted the same vote as before, don't use
-            // VoteQueue.
+            // Update the user (we modify the votes_hash).
+            global.VoterUpdateQueue.push({
+                username: viewContext.req.user.username,
+                update: function(voter, callback) {
 
-            // Save the user (we modified the votes_hash).
-            this.req.user.votes_hash = votes_hash;
-			if (this.req.user.public_vote)							//this saves a copy of votes_hash for public vote opt-outs
-				this.req.user.votes_hash_public = votes_hash;
-            this.req.user.save(function(err) {
-                if (err) return new Error("Unable to save user."); // TODO: Handle this better?
+                    /*
+                     * delete the old vote and append the new vote, in the votes hash.
+                     *
+                     * votes_hash format example:
+                     * Vote Topic Name:Chosen Option;Vote Topic Name:Chosen Option;Vote Topic Name:Chosen Option
+                     */
+                    // TODO: votes_hash will eventually be encrypted, and we then have to decrypt it to get te value, and encrypt it to store it back in the following lines below..
+                    voter.votes_hash = voter.votes_hash.replace(new RegExp(voterChoice.name+":[^:;]*;"), "");
+                    voter.votes_hash += voterChoice.name+":"+voterChoice.choice+";";
 
-                // Get all topics to give to the view.
-                VoteTopic.getAll(function(err, topics) {
-                    if (err) {
-                        viewContext.modalError = true;
-                        viewContext.modalMessage = "Could not get vote topics.";
-                    }
-                    viewContext.modalMessage = "Vote saved!";
-                    viewContext.voteTopics = topics;
+                    // TODO: if the user has submitted the same vote as before, don't use
+                    // VoteQueue.
 
-                    // And finally:
-                    viewContext.render();
-                });
+                    if (voter.public_vote) //this saves a copy of votes_hash for public vote opt-outs
+                        voter.votes_hash_public = voter.votes_hash;
+
+                    callback();
+                }
+            });
+
+            // Get all topics to give to the view.
+            console.log(" -- Getting vote topics for vote page.");
+            VoteTopic.getAll(function(err, topics) {
+                if (err) {
+                    viewContext.modalError = true;
+                    viewContext.modalMessage = "Could not get vote topics.";
+                }
+                viewContext.modalMessage = "Vote saved!";
+                viewContext.voteTopics = topics;
+
+                // And finally:
+                viewContext.render();
             });
         }
         else { // if no POST (we don't care about GET for this page).
@@ -256,12 +263,12 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
     PagesController.results = function() {
         this.common = this.req.commonAttributes; // Always have this line in each controller method, at the top. There's probably a better way to do it...
         var viewContext = this;
-        
+
         // Make votes_count available to the Results page by creating a new
         // model
         var VoteTopic = require("../models/vote_topic.js"); // It gets the required assignments from w/i vote_topics.js & assigns them to VoteTopic
         // line 87 from vote_topic.js
-        
+
         // NOW, use VoteTopic model to get the information required
         VoteTopic.getAll(function(err, voteTopics){ // function takes 2 param
             if (err) {
@@ -283,7 +290,7 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
             });
             // Any instruction after the render() will not be shown on the
             // template
-            
+
             // NOW claculate percentages before rendering
             viewContext.render();
 

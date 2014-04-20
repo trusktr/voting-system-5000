@@ -59,6 +59,12 @@
             {>vote_topic/} {! Use the vote_topic.dust template. !}
         {/voteTopics}
 
+        <div class="row">
+            <div class="large-12 columns">
+                <button class="button success" id="submit_vote_button">Submit</button>
+            </div>
+        </div>
+
     </div>
 
   </div>
@@ -71,13 +77,11 @@
         /*
          * Builds the data model containing the user's vote for each topic.
          */
-        function constructDataModel(_button) {
+        function constructDataModel(_voteTopic) {
             var dataModel = {};
 
-            var _voteTopic = _button.closest(".voteTopic");
-
             dataModel.name = _voteTopic.find(".voteTopicName").text();
-            dataModel.choice = _button.text();
+            dataModel.choice = _voteTopic.find(".button").not(".secondary").text();
             return dataModel;
         }
 
@@ -100,23 +104,33 @@
              * Handle the changing of values for the vote topics. This sends a
              * vote count update to the server.
              */
-            $("body").on("click", ".vote-topic-selection-buttons .button", function(event) {
-                var data = constructDataModel($(this));
-                console.log(data);
-                $.post("/vote", data, function(data) {
-                    var _doc = $(data); // backend returns HTML pages.
-                    var _thisBody = $("body");
-                    if (_doc.find("#modalMessage").length > 0) {
-                        $(".modalMessage").html(_doc.find("#modalMessage").html());
-                        if ($(".joyride-tip-guide").length > 0) {
-                            $(document).foundation('joyride', 'stop');
+            $("body").on("click", "button#submit_vote_button", function(event) {
+                var _voteTopics = $(".voteTopic");
+                var submittedCount = 0; // count how many vote topic choices we submit to backend..
+                // We're sending one request per vote topic. TODO: Make it a single request in the future.
+                _voteTopics.each(function() {
+                    var data = constructDataModel($(this));
+                    console.log(data);
+                    $.post("/vote", data, function(data) {
+                        var _doc = $(data); // backend returns HTML pages.
+                        var _thisBody = $("body");
+                        submittedCount++;
+
+                        // if we've submitted all votes.
+                        if (submittedCount == _voteTopics.length) {
+                            if (_doc.find("#modalMessage").length > 0) { // if server responded with a message
+                                $(".modalMessage").html(_doc.find("#modalMessage").html()); // get the message
+                                if ($(".joyride-tip-guide").length > 0) { // remove the current modal dialog if any is currently active.
+                                    $(document).foundation('joyride', 'stop');
+                                }
+                                $(document).foundation('joyride', 'start'); // start a new modal dialog to display the message.
+                                console.log("Vote saved.");
+                            }
+                            else {
+                                console.log("Vote saved.");
+                            }
                         }
-                        $(document).foundation('joyride', 'start');
-                        console.log("Vote saved.");
-                    }
-                    else {
-                        console.log("Vote saved.");
-                    }
+                    });
                 });
             });
         });

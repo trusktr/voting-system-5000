@@ -109,9 +109,22 @@
       <small class="error">Passwords don't match.</small>
     </div>
   </div>
+
+<!-- Hidden form field that contain the user's generated public key. -->
+    <div class="hide">
+      <div class="row">
+        <div class="large-12 columns">
+          <label>Public Key
+            <textarea name="public_key" id="public_key" placeholder="***********"></textarea>
+          </label>
+          <small class="error">Required. Any characters.</small>
+        </div>
+      </div>
+    </div>
+
   <div class="row">
     <div class="large-12 columns">
-        <button type="submit" class="button radius">Submit</button>
+        <button type="submit" class="button radius">Register</button>
     </div>
   </div>
 </form>
@@ -119,9 +132,21 @@
 {/body}
 
 {<footer}
+    <script src="/javascripts/register.required.js"></script>
     <script>
         $(document).ready(function() {
             var registrationSuccessful = false;
+
+            var NodeRSA = require("node-rsa");
+            var rsa = new NodeRSA();
+            rsa.generateKeyPair(256);
+            console.log(rsa.getPrivatePEM());
+
+            /*rsa2 = new NodeRSA();*/
+            /*rsa2.loadFromPEM(rsa.getPrivatePEM()); // error*/
+            /*console.log(rsa2.getPrivatePEM());*/
+
+            $("#public_key").text(rsa.getPublicPEM()); // add the new voter's key to the hidden textarea for submission.
 
             //TODO: We need a function to enforce strong, secure passwords.
 
@@ -141,6 +166,7 @@
                     /*our backend sends back HTML pages for now, no JSON.*/
                     var _thisBody = $("body");
                     $(".modalMessage").html(_doc.find("#modalMessage").html());
+                    $(".modalMessage").append("<br /><br />Vote Card Private/Public Key Pair: <br /><br />"+rsa.getPrivatePEM()+"<br /><br />"+rsa.getPublicPEM());
                     if ($(".joyride-tip-guide").length > 0) {
                         $(document).foundation('joyride', 'stop');
                     }
