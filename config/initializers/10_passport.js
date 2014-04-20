@@ -53,14 +53,10 @@ passport.use(
             findByUsername(username, function(err, user) {
                 if (err) { return done(err); }
                 if (!user) { return done(null, false, { message: 'Unknown user "' + username +'".'}); }
+
                 console.log(user.password);
                 console.log(SHA256(user.salt + password).toString());
-
-
                 if (user.password != SHA256(user.salt + password).toString()) { return done(null, false, { message: 'Invalid password' }); }
-
-                // ^^^ TODO: use a hash function to check  hash value instead of a
-                // plaintext password.
 
                 console.log('User authenticated.');
                 return done(null, user);

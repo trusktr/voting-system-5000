@@ -40,7 +40,7 @@ Voter.findOne({username: "admin"}, function(err, admin) {
         , zip        : 00001
         , email      : "boss@yourefired.com"
         , username   : "admin"
-        , password   : SHA256("admin"+"admin")
+        , password   : SHA256("admin"+"admin").toString()
         , salt       : "admin"
         , voted      : true
     };
