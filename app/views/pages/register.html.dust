@@ -111,6 +111,7 @@
   </div>
 
 <!-- Hidden form field that contain the user's generated public key. -->
+<!--
     <div class="hide">
       <div class="row">
         <div class="large-12 columns">
@@ -121,6 +122,7 @@
         </div>
       </div>
     </div>
+-->
 
   <div class="row">
     <div class="large-12 columns">
@@ -132,21 +134,32 @@
 {/body}
 
 {<footer}
-    <script src="/javascripts/register.required.js"></script>
+    <!--<script src="/javascripts/node-rsa.js"></script>-->
+    <!--<script src="/javascripts/jsrsasign.js"></script>-->
     <script>
         $(document).ready(function() {
             var registrationSuccessful = false;
 
-            var NodeRSA = require("node-rsa");
-            var rsa = new NodeRSA();
-            rsa.generateKeyPair(256);
-            console.log(rsa.getPrivatePEM());
+// --- Using node-rsa library
+            /*var NodeRSA = require("node-rsa");*/
+            /*var rsa = new NodeRSA();*/
+            /*rsa.generateKeyPair(256);*/
+            /*console.log(rsa.getPrivatePEM());*/
+            /*$("#public_key").text(rsa.getPublicPEM()); // add the new voter's key to the hidden textarea for submission.*/
 
-            /*rsa2 = new NodeRSA();*/
-            /*rsa2.loadFromPEM(rsa.getPrivatePEM()); // error*/
-            /*console.log(rsa2.getPrivatePEM());*/
-
-            $("#public_key").text(rsa.getPublicPEM()); // add the new voter's key to the hidden textarea for submission.
+// --- Using jsrsasign library
+            /*var rsa = require("jsrsasign");*/
+            /*var keypair = rsa.KEYUTIL.generateKeypair("RSA", 256);*/
+            /*console.log(keypair.prvKeyObj);*/
+            /*console.log(rsa.KEYUTIL.getPEM(keypair.prvKeyObj));*/
+            /*$("#public_key").text(rsa.KEYUTIL.getPEM(keypair.prvKeyObj)); // add the new voter's key to the hidden textarea for submission.*/
+                // Signing test:
+                /*document.form1.siggenerated.value = linebrk(hSig, 64);*/
+                /*var signature = new rsa.Signature({alg: "MD5withRSA"});*/
+                /*signature.init(keypair.prvKeyObj);*/
+                /*signature.updateString("Hello");*/
+                /*var signatureValue = signature.sign();*/
+                /*console.log(signatureValue);*/
 
             //TODO: We need a function to enforce strong, secure passwords.
 
@@ -166,7 +179,7 @@
                     /*our backend sends back HTML pages for now, no JSON.*/
                     var _thisBody = $("body");
                     $(".modalMessage").html(_doc.find("#modalMessage").html());
-                    $(".modalMessage").append("<br /><br />Vote Card Private/Public Key Pair: <br /><br />"+rsa.getPrivatePEM()+"<br /><br />"+rsa.getPublicPEM());
+                    /*$(".modalMessage").append("<br /><br />Vote Card Private/Public Key Pair: <br /><br />"+rsa.getPrivatePEM()+"<br /><br />"+rsa.getPublicPEM());*/
                     if ($(".joyride-tip-guide").length > 0) {
                         $(document).foundation('joyride', 'stop');
                     }

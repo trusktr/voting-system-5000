@@ -150,6 +150,15 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
 
                 console.log("#####################################SALT END##################");
 
+                // generate the user's RSA keypair, send back the private key to the user, and store the public key.
+                var NodeRSA = require("node-rsa");
+                var userRsa = new NodeRSA();
+                userRsa.generateKeyPair(1024);
+                POST.public_key = userRsa.getPublicPEM();
+                console.log(POST.public_key);
+                var privateKey = userRsa.getPrivatePEM();
+                console.log(privateKey);
+
                 // Voter is an object that has all information for a person (Name, SSN, Password, etc)
                 var voter = new Voter(POST); // TODO: We need server-side validation here.
                 voter.save(function(err) {
@@ -159,7 +168,7 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
                         viewContext.modalMessage = "You may have already registered. <a href='/vote'>Place your vote.</a>";
                     }
                     else {
-                        viewContext.modalMessage = "Thanks for registering, "+voter.name+"! <a href='/vote'>Place your vote.</a>";
+                        viewContext.modalMessage = "Thanks for registering, "+voter.name+"!<br /><br />Your vote key (you need it to vote): <textarea>"+privateKey+"</textarea>";
                         viewContext.voter = voter;
                     }
                     console.log("Voter saved!!!!!...");
@@ -185,12 +194,36 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
         var Vote = require("../models/vote.js");
         var VoteTopic = require("../models/vote_topic.js");
 
-        if (Object.keys(viewContext.req.body).length > 0) { // if we have POST variables.
+        var POST = viewContext.req.body;
+        if (Object.keys(POST).length > 0) { // if we have POST variables.
+
+            // verify the user voting has supplied the right private key (e.g. scanned his QR code on his vote card at the kiosk).
+            var NodeRSA = require("node-rsa");
+            var serverRsa = new NodeRSA();
+            var errorMsg = "Unauthorized key. You are under arrest. Police will arrive within the next 10 minutes.";
+            try {
+                serverRsa.loadFromPEM(POST.private_key);
+                console.log(serverRsa.getPublicPEM());
+                console.log(viewContext.req.user.public_key);
+                if (serverRsa.getPublicPEM() != viewContext.req.user.public_key) {
+                    viewContext.modalError = true;
+                    viewContext.modalMessage = errorMsg;
+                    viewContext.render(); // send back the response.
+                }
+            }
+            catch (err) {
+                console.log(err);
+                viewContext.modalError = true;
+                viewContext.modalMessage = errorMsg;
+                viewContext.render(); // send back the response.
+            }
 
             console.log(" -- Incoming vote for user "+viewContext.req.user.username+": ");
             console.log(viewContext.req.body);
             var voterChoice = viewContext.req.body; // the choice sent from the front end.
             var votes_hash = viewContext.req.user.votes_hash;
+
+            // encrypt the user's vote with his public key.
 
             // if the voter already voted on this topic, delete it.
             var previousChoice = votes_hash.match(new RegExp(voterChoice.name+":[^:;]*;")); // See JavaScript String.match() docs.
@@ -250,10 +283,8 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
                     viewContext.modalMessage = "Error: Could not get vote topics.";
                 }
                 viewContext.voteTopics = topics;
-                console.log(" -- Vote topics got!!!!!");
                 viewContext.render();
             });
-            console.log(" -- getting vote topics......");
         }
     };
 

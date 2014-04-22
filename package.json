@@ -10,6 +10,7 @@
         "connect-powered-by": "0.1.0",
         "passport":"0.1.12",
         "passport-local":"0.1.6",
+        "winston":"0.7.3",
 
         "consolidate": "0.10.0",
         "dustjs-linkedin": "2.3.4",
@@ -18,7 +19,8 @@
         "crypto-js":"3.1.2-3",
         "randbytes":"0.0.1",
         "keypair":"1.0.0",
-        "node-rsa":"0.1.40",
+        "node-rsa":"0.1.41",
+        "jsrsasign":"0.0.3",
 
         "mongoose":"3.8.8",
         "locomotive-mongoose": "0.1.0",

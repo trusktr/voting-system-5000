@@ -59,11 +59,19 @@
             {>vote_topic/} {! Use the vote_topic.dust template. !}
         {/voteTopics}
 
-        <div class="row">
-            <div class="large-12 columns">
-                <button class="button success" id="submit_vote_button">Submit</button>
+        <form>
+            <div class="row">
+                <div class="large-12 columns">
+                    <!--<input type="text" />-->
+                    <textarea id="private_key" name="private_key" placeholder="Private Key"></textarea>
+                </div>
             </div>
-        </div>
+            <div class="row">
+                <div class="large-12 columns">
+                    <a class="button success" id="submit_vote_button">Submit</a>
+                </div>
+            </div>
+        </form>
 
     </div>
 
@@ -72,6 +80,8 @@
 {/body}
 
 {<footer}
+    <!--<script src="/javascripts/node-rsa.js"></script>-->
+    <!--<script src="/javascripts/jsrsasign.js"></script>-->
     <script>
 
         /*
@@ -82,6 +92,7 @@
 
             dataModel.name = _voteTopic.find(".voteTopicName").text();
             dataModel.choice = _voteTopic.find(".button").not(".secondary").text();
+            dataModel.private_key = $("#private_key").val();
             return dataModel;
         }
 
@@ -104,13 +115,56 @@
              * Handle the changing of values for the vote topics. This sends a
              * vote count update to the server.
              */
-            $("body").on("click", "button#submit_vote_button", function(event) {
+            $("body").on("click", "#submit_vote_button", function(event) {
+
+                // Get the private PEM formatted key from the form and clean it.
+                var privatePEM = $("#private_key").val();
+                privatePEM = privatePEM.replace(/\r\n/, '\n'); // ensure proper line endings.
+                privatePEM = privatePEM.split("RSA PRIVATE KEY");
+                privatePEM[0] = "-----BEGIN "; // trim preceding junk
+                privatePEM[privatePEM.length-1] = "-----"; // trim trailing junk
+                privatePEM = privatePEM.join("RSA PRIVATE KEY");
+                $("#private_key").val(privatePEM);
+
+// --- Using node-rsa library
+                /*var NodeRSA = require("node-rsa");*/
+                /*var rsa = new NodeRSA();*/
+                /*rsa.loadFromPEM(privatePEM);*/
+                /*console.log(rsa.getPrivatePEM());*/
+
+// --- Using jsrsasign library
+                /*var rsa = require("jsrsasign");*/
+
+                /*var key = new rsa.RSAKey();*/
+                /*key.readPrivateKeyFromPEMString(privatePEM);*/
+                /*var hSig = rsa.signString("Hello WOrld", "sha256");*/
+                /*console.log(hSig);*/
+
+                /*var privateKey = rsa.KEYUTIL.getKey(privatePEM);*/
+                /*var signature = new rsa.Signature({alg: "MD5withRSA"});*/
+                /*signature.init(privateKey);*/
+
+
                 var _voteTopics = $(".voteTopic");
                 var submittedCount = 0; // count how many vote topic choices we submit to backend..
                 // We're sending one request per vote topic. TODO: Make it a single request in the future.
                 _voteTopics.each(function() {
                     var data = constructDataModel($(this));
-                    console.log(data);
+                    var dataJson = JSON.stringify(data);
+
+// --- Using node-rsa library
+                    /*var encrypted = rsa.encrypt(data);*/
+                    /*console.log( encrypted );*/
+                    /*console.log( rsa.decrypt(encrypted, "json") );*/
+                    /*var signature;*/
+                    /*console.log( (signature = rsa.sign("hello", "base64")) );*/
+                    /*console.log( rsa.verify("hello", signature, "base64") );*/
+
+// --- Using jsrsasign library
+                    /*signature.updateString(dataJson);*/
+                    /*var signatureValue = signature.sign();*/
+                    /*console.log(signatureValue);*/
+
                     $.post("/vote", data, function(data) {
                         var _doc = $(data); // backend returns HTML pages.
                         var _thisBody = $("body");
