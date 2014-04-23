@@ -7497,7 +7497,8 @@ module.exports = (function() {
         this.$cache = {};
 
         this.options = _.merge({
-            signingAlgorithm: 'RSA-SHA256'
+            signingAlgorithm: 'sha256',
+            environment: utils.detectEnvironment()
         }, options  || {});
 
         if (_.isObject(key)) {
@@ -7518,6 +7519,10 @@ module.exports = (function() {
         bits = bits || 2048;
         exp = 65537;
 
+        if (bits % 2 == 1) {
+            throw Error('Key size must be even.');
+        }
+
         this.keyPair.generate(bits, exp.toString(16));
         this.$recalculateCache();
         return this;
@@ -7529,9 +7534,9 @@ module.exports = (function() {
      */
     NodeRSA.prototype.loadFromPEM = function(pem) {
         if (/^-----BEGIN RSA PRIVATE KEY-----\s([A-Za-z0-9+/=]+\s)+-----END RSA PRIVATE KEY-----$/g.test(pem)) {
-            this.loadFromPrivatePEM(pem, 'base64');
+            this.$loadFromPrivatePEM(pem, 'base64');
         } else if (/^-----BEGIN PUBLIC KEY-----\s([A-Za-z0-9+/=]+\s)+-----END PUBLIC KEY-----$/g.test(pem)) {
-            this.loadFromPublicPEM(pem, 'base64');
+            this.$loadFromPublicPEM(pem, 'base64');
         } else
             throw Error('Invalid PEM format');
 
@@ -7541,13 +7546,13 @@ module.exports = (function() {
     /**
      * Make key form private PEM string
      *
-     * @param publicPEM {string}
+     * @param privatePEM {string}
      */
-    NodeRSA.prototype.loadFromPrivatePEM = function(privatePEM, encoding) {
+    NodeRSA.prototype.$loadFromPrivatePEM = function(privatePEM, encoding) {
         var pem = privatePEM
             .replace('-----BEGIN RSA PRIVATE KEY-----','')
             .replace('-----END RSA PRIVATE KEY-----','')
-            .replace(/\s+|\n|\r$/gm, '');
+            .replace(/\s+|\n\r|\n|\r$/gm, '');
         var reader = new ber.Reader(new Buffer(pem, 'base64'));
 
         reader.readSequence();
@@ -7568,13 +7573,13 @@ module.exports = (function() {
     /**
      * Make key form public PEM string
      *
-     * @param privatePEM {string}
+     * @param publicPEM {string}
      */
-    NodeRSA.prototype.loadFromPublicPEM = function(publicPEM, encoding) {
+    NodeRSA.prototype.$loadFromPublicPEM = function(publicPEM, encoding) {
         var pem = publicPEM
             .replace('-----BEGIN PUBLIC KEY-----','')
             .replace('-----END PUBLIC KEY-----','')
-            .replace(/\s+|\n|\r$/gm, '');
+            .replace(/\s+|\n\r|\n|\r$/gm, '');
         var reader = new ber.Reader(new Buffer(pem, 'base64'));
 
         reader.readSequence();
@@ -7650,10 +7655,19 @@ module.exports = (function() {
             throw Error("It is not private key");
         }
 
-        encoding = (!encoding || encoding == 'buffer' ? null : encoding);
-        var signer = crypt.createSign(this.options.signingAlgorithm);
-        signer.update(this.$getDataForEcrypt(buffer, source_encoding));
-        return signer.sign(this.getPrivatePEM(), encoding);
+        if (this.options.environment == 'browser') {
+            var res = this.keyPair.sign(this.$getDataForEcrypt(buffer, source_encoding), this.options.signingAlgorithm.toLowerCase());
+            if (encoding && encoding != 'buffer') {
+                return res.toString(encoding);
+            } else {
+                return res;
+            }
+        } else {
+            encoding = (!encoding || encoding == 'buffer' ? null : encoding);
+            var signer = crypt.createSign('RSA-' + this.options.signingAlgorithm.toUpperCase());
+            signer.update(this.$getDataForEcrypt(buffer, source_encoding));
+            return signer.sign(this.getPrivatePEM(), encoding);
+        }
     };
 
     /**
@@ -7666,10 +7680,19 @@ module.exports = (function() {
      * @returns {*}
      */
     NodeRSA.prototype.verify = function(buffer, signature, source_encoding, signature_encoding) {
+        if (!this.isPublic()) {
+            throw Error("It is not public key");
+        }
+
         signature_encoding = (!signature_encoding || signature_encoding == 'buffer' ? null : signature_encoding);
-        var verifier = crypt.createVerify(this.options.signingAlgorithm);
-        verifier.update(this.$getDataForEcrypt(buffer, source_encoding));
-        return verifier.verify(this.getPublicPEM(), signature, signature_encoding);
+
+        if (this.options.environment == 'browser') {
+            return this.keyPair.verify(this.$getDataForEcrypt(buffer, source_encoding), signature, signature_encoding, this.options.signingAlgorithm.toLowerCase());
+        } else {
+            var verifier = crypt.createVerify('RSA-' + this.options.signingAlgorithm.toUpperCase());
+            verifier.update(this.$getDataForEcrypt(buffer, source_encoding));
+            return verifier.verify(this.getPublicPEM(), signature, signature_encoding);
+        }
     };
 
     NodeRSA.prototype.getPrivatePEM = function () {
@@ -7686,6 +7709,14 @@ module.exports = (function() {
         }
 
         return this.$cache.publicPEM;
+    };
+
+    NodeRSA.prototype.getKeySize = function () {
+        return this.keyPair.keySize;
+    };
+
+    NodeRSA.prototype.getMaxMessageSize = function () {
+        return this.keyPair.maxMessageLength;
     };
 
     /**
@@ -7724,7 +7755,6 @@ module.exports = (function() {
             return buffer.toString(encoding);
         }
     };
-
 
     /**
      * private
@@ -9360,13 +9390,23 @@ module.exports = BigInteger;
  */
 
 /*
- * Node.js adaptation, long message support implementation
+ * Node.js adaptation
+ * long message support implementation
+ * signing/verifying
+ *
  * 2014 rzcoder
  */
 
 var crypt = require('crypto');
 var BigInteger = require("./jsbn.js");
 var utils = require('../utils.js');
+var _ = require('lodash');
+
+var SIGNINFOHEAD = {
+    sha1:   new Buffer('3021300906052b0e03021a05000414','hex'),
+    sha256: new Buffer('3031300d060960864801650304020105000420','hex'),
+    md5:    new Buffer('3020300c06082a864886f70d020505000410','hex')
+};
 
 exports.BigInteger = BigInteger;
 module.exports.Key = (function() {
@@ -9520,8 +9560,8 @@ module.exports.Key = (function() {
         var results = [];
 
         var bufferSize = buffer.length;
-        var buffersCount = Math.ceil(bufferSize / this.maxMessageLength); // total buffers count for encrypt
-        var dividedSize = Math.ceil(bufferSize / buffersCount); // each buffer size
+        var buffersCount = Math.ceil(bufferSize / this.maxMessageLength) || 1; // total buffers count for encrypt
+        var dividedSize = Math.ceil(bufferSize / buffersCount || 1); // each buffer size
 
         if ( buffersCount == 1) {
             buffers.push(buffer);
@@ -9534,7 +9574,7 @@ module.exports.Key = (function() {
         for(var i in buffers) {
             var buf = buffers[i];
 
-            var m = this.$$pkcs1pad2(buf, this.encryptedDataLength);
+            var m = this.$$pkcs1pad2(buf);
 
             if (m === null) {
                 return null;
@@ -9574,22 +9614,56 @@ module.exports.Key = (function() {
 
         var buffersCount = buffer.length / this.encryptedDataLength;
 
-
         for (var i = 0; i < buffersCount; i++) {
             offset = i * this.encryptedDataLength;
             length = offset + this.encryptedDataLength;
 
             var c = new BigInteger(buffer.slice(offset, Math.min(length, buffer.length)));
+
             var m = this.$doPrivate(c);
+
             if (m === null) {
                 return null;
             }
 
-            result.push(this.$$pkcs1unpad2(m, this.encryptedDataLength));
+            result.push(this.$$pkcs1unpad2(m));
         }
 
         return Buffer.concat(result);
     };
+
+    RSAKey.prototype.sign = function (buffer, hashAlgorithm) {
+        var hasher = crypt.createHash(hashAlgorithm);
+        hasher.update(buffer);
+        var hash = this.$$pkcs1(hasher.digest(), hashAlgorithm);
+        var encryptedBuffer = this.$doPrivate(new BigInteger(hash)).toBuffer(true);
+
+        while (encryptedBuffer.length < this.encryptedDataLength) {
+            encryptedBuffer = Buffer.concat([new Buffer([0]), encryptedBuffer]);
+        }
+
+        return encryptedBuffer;
+
+    };
+
+    RSAKey.prototype.verify = function (buffer, signature, signature_encoding, hashAlgorithm) {
+
+        if (signature_encoding) {
+            signature = new Buffer(signature, signature_encoding);
+        }
+
+        var hasher = crypt.createHash(hashAlgorithm);
+        hasher.update(buffer);
+
+        var hash = this.$$pkcs1(hasher.digest(), hashAlgorithm);
+        var m = this.$doPublic(new BigInteger(signature));
+
+        return m.toBuffer().toString('hex') == hash.toString('hex');
+    };
+
+    Object.defineProperty(RSAKey.prototype, 'keySize', {
+        get: function() { return this.cache.keyBitLength; }
+    });
 
     Object.defineProperty(RSAKey.prototype, 'encryptedDataLength', {
         get: function() { return this.cache.keyByteLength; }
@@ -9606,18 +9680,48 @@ module.exports.Key = (function() {
         this.cache = this.cache || {};
         // Bit & byte length
         this.cache.keyBitLength = this.n.bitLength();
+        if (this.cache.keyBitLength % 2 == 1) {
+            this.cache.keyBitLength = this.cache.keyBitLength + 1;
+        }
+
         this.cache.keyByteLength = (this.cache.keyBitLength + 6) >> 3;
     };
 
     /**
-     * PKCS#1 (type 2, random) pad input buffer to n bytes, and return a bigint
-     * @param buffer
+     * PKCS#1 pad input buffer to max data length
+     * @param hashBuf
+     * @param hashAlgorithm
      * @param n
      * @returns {*}
      */
-    RSAKey.prototype.$$pkcs1pad2 = function (buffer, n) {
-        if (n < buffer.length + 11) {
-            throw new Error("Message too long for RSA (n=" + n + ", l=" + buffer.length + ")");
+    RSAKey.prototype.$$pkcs1 = function (hashBuf, hashAlgorithm, n) {
+        if(!SIGNINFOHEAD[hashAlgorithm])
+            throw Error('Unsupported hash algorithm');
+
+        var data = Buffer.concat([SIGNINFOHEAD[hashAlgorithm], hashBuf]);
+
+        if (data.length + 10 > this.encryptedDataLength) {
+            throw Error('Key is too short for signing algorithm (' + hashAlgorithm + ')');
+        }
+
+        var filled = new Buffer(this.encryptedDataLength - data.length - 1);
+        filled.fill(0xff, 0, filled.length - 1);
+        filled[0] = 1;
+        filled[filled.length - 1] = 0;
+
+        var res = Buffer.concat([filled, data]);
+
+        return res;
+    };
+
+    /**
+     * PKCS#1 (type 2, random) pad input buffer to encryptedDataLength bytes, and return a bigint
+     * @param buffer
+     * @returns {*}
+     */
+    RSAKey.prototype.$$pkcs1pad2 = function (buffer) {
+        if (buffer.length > this.maxMessageLength) {
+            throw new Error("Message too long for RSA (n=" + this.encryptedDataLength + ", l=" + buffer.length + ")");
         }
 
         // TO-DO: make n-length buffer
@@ -9625,11 +9729,12 @@ module.exports.Key = (function() {
 
         // random padding
         ba.unshift(0);
-        var rand = crypt.randomBytes(n - ba.length - 2);
+        var rand = crypt.randomBytes(this.encryptedDataLength - ba.length - 2);
         for(var i = 0; i < rand.length; i++) {
             var r = rand[i];
-            while (r === 0) // non-zero only
+            while (r === 0) { // non-zero only
                 r = crypt.randomBytes(1)[0];
+            }
             ba.unshift(r);
         }
         ba.unshift(2);
@@ -9641,17 +9746,16 @@ module.exports.Key = (function() {
     /**
      * Undo PKCS#1 (type 2, random) padding and, if valid, return the plaintext
      * @param d
-     * @param n
      * @returns {Buffer}
      */
-    RSAKey.prototype.$$pkcs1unpad2 = function (d, n) {
+    RSAKey.prototype.$$pkcs1unpad2 = function (d) {
         var b = d.toByteArray();
         var i = 0;
         while (i < b.length && b[i] === 0) {
             ++i;
         }
 
-        if (b.length - i != n - 1 || b[i] != 2) {
+        if (b.length - i != this.encryptedDataLength - 1 || b[i] != 2) {
             return null;
         }
 
@@ -9675,7 +9779,8 @@ module.exports.Key = (function() {
 
 
 }).call(this,require("buffer").Buffer)
-},{"../utils.js":12,"./jsbn.js":10,"buffer":16,"crypto":20}],12:[function(require,module,exports){
+},{"../utils.js":12,"./jsbn.js":10,"buffer":16,"crypto":20,"lodash":7}],12:[function(require,module,exports){
+(function (process){
 /*
  * Utils functions
  *
@@ -9695,6 +9800,16 @@ module.exports.linebrk = function (str, maxLen) {
         i += maxLen;
     }
     return res + str.substring(i, str.length);
+};
+
+module.exports.detectEnvironment = function() {
+    if (process && process.title != 'browser') {
+        return 'node';
+    } else if (window) {
+        return 'browser';
+    }
+
+    return 'node';
 };
 
 /**
@@ -9721,7 +9836,8 @@ module.exports.get32IntFromBuffer = function (buffer, offset) {
     }
 };
 
-},{}],13:[function(require,module,exports){
+}).call(this,require("/usr/lib/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
+},{"/usr/lib/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":26}],13:[function(require,module,exports){
 // http://wiki.commonjs.org/wiki/Unit_Testing/1.0
 //
 // THIS IS NOT TESTED NOR LIKELY TO WORK OUTSIDE V8!

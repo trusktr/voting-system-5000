@@ -62,7 +62,6 @@
         <form>
             <div class="row">
                 <div class="large-12 columns">
-                    <!--<input type="text" />-->
                     <textarea id="private_key" name="private_key" placeholder="Private Key"></textarea>
                 </div>
             </div>
@@ -80,19 +79,18 @@
 {/body}
 
 {<footer}
-    <!--<script src="/javascripts/node-rsa.js"></script>-->
+    <script src="/javascripts/node-rsa.js"></script>
     <!--<script src="/javascripts/jsrsasign.js"></script>-->
     <script>
 
         /*
-         * Builds the data model containing the user's vote for each topic.
+         * Builds the data model containing the user's vote for each topic, along with the signature of the vote.
          */
         function constructDataModel(_voteTopic) {
             var dataModel = {};
 
             dataModel.name = _voteTopic.find(".voteTopicName").text();
             dataModel.choice = _voteTopic.find(".button").not(".secondary").text();
-            dataModel.private_key = $("#private_key").val();
             return dataModel;
         }
 
@@ -127,10 +125,10 @@
                 $("#private_key").val(privatePEM);
 
 // --- Using node-rsa library
-                /*var NodeRSA = require("node-rsa");*/
-                /*var rsa = new NodeRSA();*/
-                /*rsa.loadFromPEM(privatePEM);*/
-                /*console.log(rsa.getPrivatePEM());*/
+                var NodeRSA = require("node-rsa");
+                var rsa = new NodeRSA();
+                rsa.loadFromPEM(privatePEM);
+                console.log(rsa.getPrivatePEM());
 
 // --- Using jsrsasign library
                 /*var rsa = require("jsrsasign");*/
@@ -149,23 +147,19 @@
                 var submittedCount = 0; // count how many vote topic choices we submit to backend..
                 // We're sending one request per vote topic. TODO: Make it a single request in the future.
                 _voteTopics.each(function() {
-                    var data = constructDataModel($(this));
-                    var dataJson = JSON.stringify(data);
+                    var postData = {vote: {}, signature: {}};
+                    postData.vote = constructDataModel($(this));
 
 // --- Using node-rsa library
-                    /*var encrypted = rsa.encrypt(data);*/
-                    /*console.log( encrypted );*/
-                    /*console.log( rsa.decrypt(encrypted, "json") );*/
-                    /*var signature;*/
-                    /*console.log( (signature = rsa.sign("hello", "base64")) );*/
-                    /*console.log( rsa.verify("hello", signature, "base64") );*/
+                    console.log( (postData.signature = rsa.sign(postData.vote, "base64")) );
+                    console.log("----");
 
 // --- Using jsrsasign library
                     /*signature.updateString(dataJson);*/
                     /*var signatureValue = signature.sign();*/
                     /*console.log(signatureValue);*/
 
-                    $.post("/vote", data, function(data) {
+                    $.post("/vote", postData, function(data) {
                         var _doc = $(data); // backend returns HTML pages.
                         var _thisBody = $("body");
                         submittedCount++;

@@ -24,6 +24,22 @@ var VoterSchema = new Schema({
 });
 VoterSchema.plugin(require('mongoose-unique-validator'));
 
+VoterSchema.pre('save', function (next) {
+    var voter = this;
+
+    // Get the private PEM formatted key from the form and clean it.
+    var publicPEM = voter.public_key;
+    publicPEM = publicPEM.replace(/\r\n/g, '\n'); // ensure proper line endings.
+    publicPEM = publicPEM.split("PUBLIC KEY");
+    publicPEM[0] = "-----BEGIN "; // trim preceding junk
+    publicPEM[publicPEM.length-1] = "-----"; // trim trailing junk
+    publicPEM = publicPEM.join("PUBLIC KEY");
+
+    voter.public_key = publicPEM;
+    next();
+});
+
+
 
 module.exports = mongoose.model('Voter', VoterSchema);
 

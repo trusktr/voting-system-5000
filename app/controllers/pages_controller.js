@@ -137,7 +137,7 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
             var RandBytes = new require('randbytes');
 
             var randomSource = RandBytes.urandom.getInstance();
-            randomSource.getRandomBytes(64, function (buff) {
+            randomSource.getRandomBytes(64, function (buff) { // generate a random number to use as salt.
 
                 console.log("#####################################SALT##################");
 
@@ -153,11 +153,11 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
                 // generate the user's RSA keypair, send back the private key to the user, and store the public key.
                 var NodeRSA = require("node-rsa");
                 var userRsa = new NodeRSA();
-                userRsa.generateKeyPair(1024);
-                POST.public_key = userRsa.getPublicPEM();
+                //userRsa.generateKeyPair(1024);
+                //POST.public_key = userRsa.getPublicPEM();
+                //var privateKey = userRsa.getPrivatePEM();
+                //console.log(privateKey);
                 console.log(POST.public_key);
-                var privateKey = userRsa.getPrivatePEM();
-                console.log(privateKey);
 
                 // Voter is an object that has all information for a person (Name, SSN, Password, etc)
                 var voter = new Voter(POST); // TODO: We need server-side validation here.
@@ -165,10 +165,10 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
                     if (err) {
                         console.log(err);
                         viewContext.modalError = true;
-                        viewContext.modalMessage = "You may have already registered. <a href='/vote'>Place your vote.</a>";
+                        viewContext.modalMessage = "ERROR: Invalid info, or you may have already registered. <a href='/vote'>Place your vote.</a>";
                     }
                     else {
-                        viewContext.modalMessage = "Thanks for registering, "+voter.name+"!<br /><br />Your vote key (you need it to vote): <textarea>"+privateKey+"</textarea>";
+                        viewContext.modalMessage = "Thanks for registering, "+voter.name+"!";
                         viewContext.voter = voter;
                     }
                     console.log("Voter saved!!!!!...");
@@ -196,31 +196,40 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
 
         var POST = viewContext.req.body;
         if (Object.keys(POST).length > 0) { // if we have POST variables.
+            console.log("POST ------------------------");
+            console.log(POST);
+            console.log(POST.vote.toString());
+            console.log(POST.vote);
 
-            // verify the user voting has supplied the right private key (e.g. scanned his QR code on his vote card at the kiosk).
+            // verify the voter has supplied the right private key (e.g. scanned his QR code on his vote card at the kiosk).
             var NodeRSA = require("node-rsa");
             var serverRsa = new NodeRSA();
-            var errorMsg = "Unauthorized key. You are under arrest. Police will arrive within the next 10 minutes.";
+            var errorMsg = ; // if the use provides the wrong key we show this message.
             try {
-                serverRsa.loadFromPEM(POST.private_key);
-                console.log(serverRsa.getPublicPEM());
                 console.log(viewContext.req.user.public_key);
-                if (serverRsa.getPublicPEM() != viewContext.req.user.public_key) {
+                var publicPEM = viewContext.req.user.public_key;
+
+                serverRsa.loadFromPEM(publicPEM);
+                console.log(serverRsa.getPublicPEM());
+                if (!serverRsa.verify(POST.vote, POST.signature, null, "base64")) {
+                    console.log("Invalid vote signature, vote rejected.");
                     viewContext.modalError = true;
-                    viewContext.modalMessage = errorMsg;
+                    viewContext.modalMessage = "Unauthorized key. You are under arrest. Police will arrive within the next 10 minutes.";
                     viewContext.render(); // send back the response.
+                    return;
                 }
             }
             catch (err) {
                 console.log(err);
                 viewContext.modalError = true;
-                viewContext.modalMessage = errorMsg;
+                viewContext.modalMessage = err.toString();
                 viewContext.render(); // send back the response.
+                return;
             }
 
             console.log(" -- Incoming vote for user "+viewContext.req.user.username+": ");
-            console.log(viewContext.req.body);
-            var voterChoice = viewContext.req.body; // the choice sent from the front end.
+            console.log(POST);
+            var voterChoice = POST.vote; // the choice sent from the front end.
             var votes_hash = viewContext.req.user.votes_hash;
 
             // encrypt the user's vote with his public key.

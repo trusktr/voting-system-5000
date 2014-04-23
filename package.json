@@ -19,7 +19,7 @@
         "crypto-js":"3.1.2-3",
         "randbytes":"0.0.1",
         "keypair":"1.0.0",
-        "node-rsa":"0.1.41",
+        "node-rsa":"0.1.50",
         "jsrsasign":"0.0.3",
 
         "mongoose":"3.8.8",
