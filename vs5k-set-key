@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+if [[ $_ != $0 ]]; then
+    echo
+    echo "Enter/paste the AES key: "
+    read -s aes_key
+    export VS5K_AES_KEY=$aes_key
+    echo "AES key set."
+else
+    echo
+    echo "You must source this file. Please try 'source vs5k-set-key' instead."; exit 1;
+fi

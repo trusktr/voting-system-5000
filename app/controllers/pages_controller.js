@@ -204,7 +204,6 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
             // verify the voter has supplied the right private key (e.g. scanned his QR code on his vote card at the kiosk).
             var NodeRSA = require("node-rsa");
             var serverRsa = new NodeRSA();
-            var errorMsg = ; // if the use provides the wrong key we show this message.
             try {
                 console.log(viewContext.req.user.public_key);
                 var publicPEM = viewContext.req.user.public_key;
