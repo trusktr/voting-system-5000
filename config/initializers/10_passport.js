@@ -8,27 +8,29 @@ var passport = require('passport'),
 /* Get the Voter model so we can query voters from the DB. */
 var Voter = require("../../app/models/voter.js");
 
+/** NOT USED CURRENTLY
 function findById(id, fn) {
     console.log('Finding user by id.');
     Voter.findById(id, function(err, voter) {
         if (voter) {
-            console.log('User found.');
+            console.log('User found by id '+id+'.');
             fn(null, voter);
         } else {
-            console.log('User not found.');
+            console.log('User not found by id '+id+'.');
             fn(new Error('User ' + id + ' does not exist'));
         }
     });
 }
+*/
 
 function findByUsername(uname, fn) {
     console.log('Finding user by username.');
     Voter.findOne({username: uname}, function(err, voter) {
         if (voter) {
-            console.log('User found.');
+            console.log('User found by name '+uname+'.');
             fn(null, voter);
         } else {
-            console.log('User not found.');
+            console.log('User not found by name '+uname+'.');
             fn(new Error('User ' + uname + ' does not exist'));
         }
     });
