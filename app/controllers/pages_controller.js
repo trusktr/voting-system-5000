@@ -165,10 +165,10 @@ Array.prototype.indexOfObjectWith = function(attr, value) {
                     if (err) {
                         console.log(err);
                         viewContext.modalError = true;
-                        viewContext.modalMessage = "ERROR: Invalid info, or you may have already registered. <a href='/vote'>Place your vote.</a>";
+                        viewContext.modalMessage = "Invalid info, or you may have already registered.";
                     }
                     else {
-                        viewContext.modalMessage = "Thanks for registering, "+voter.name+"!";
+                        viewContext.modalMessage = "Thanks for registering, "+voter.name+"! Please take your new Voter ID Card. <br /><br />IMPORTANT: This voting system is merely a proof of concept. Ideally you'd be given a Voter ID Card after having registered, but instead you'll have to copy an RSA key to your clipboard. When you vote, you'll need to paste your RSA key into a form field in lieu of scanning a Voter ID Card. <br /><br />Copy your private vote key: ";
                         viewContext.voter = voter;
                     }
                     console.log("Voter saved!!!!!...");

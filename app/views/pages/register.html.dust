@@ -178,7 +178,9 @@
                     /*our backend sends back HTML pages for now, no JSON.*/
                     var _thisBody = $("body");
                     $(".modalMessage").html(_doc.find("#modalMessage").html());
-                    $(".modalMessage").append("<br /><br />Your private vote key (you need it to vote): <textarea>"+rsa.getPrivatePEM()+"</textarea>");
+                    if (registrationSuccessful) {
+                        $(".modalMessage").append("<textarea>"+rsa.getPrivatePEM()+"</textarea>");
+                    }
                     if ($(".joyride-tip-guide").length > 0) {
                         $(document).foundation('joyride', 'stop');
                     }

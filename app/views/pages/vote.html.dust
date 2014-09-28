@@ -62,7 +62,7 @@
         <form>
             <div class="row">
                 <div class="large-12 columns">
-                    <p><strong>Private Key (Scan your voter card.)</strong></p>
+                    <p><strong>Scan your Voter ID Card (i.e. paste your RSA key from when you registered).</strong></p>
                     <textarea id="private_key" name="private_key" placeholder="Private Key"></textarea>
                 </div>
             </div>
